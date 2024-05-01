@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "230202888134",
+    "project_id": "cvault-d4348",
+    "storage_bucket": "cvault-d4348.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:230202888134:android:b76e964a9e3b9b3030ecc7",
+        "android_client_info": {
+          "package_name": "com.example.cvault"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6e3APkYG3hYG4XpCyW4UuQux0R1tKHtk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

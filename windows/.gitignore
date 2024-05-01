@@ -10,6 +10,11 @@ flutter/ephemeral/
 x64/
 x86/
 
+# Carpetas específicas de plataforma
+android/
+ios/
+macos/
+
 # Visual Studio cache files
 # files ending in .cache can be ignored
 *.[Cc]ache
