@@ -53,4 +53,26 @@ static Future<auth.User?> signInGoogle() async {
     return user;
   }
 }
+
+static Future<auth.User?> registerWithEmailPassword(String email, String password, String name) async {
+    try {
+      auth.UserCredential userCredential = await auth.FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      auth.User? user = userCredential.user;
+      if (user != null) {
+        CollectionReference users = FirebaseFirestore.instance.collection('users');
+        users.doc(user.uid).set({
+          'name': name,
+          'email': email,
+        });
+      }
+      return user;
+    } on auth.FirebaseAuthException catch (e) {
+      print(e.message);
+      return null;
+    }
+  }
+
 }
