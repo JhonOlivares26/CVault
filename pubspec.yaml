@@ -12,6 +12,7 @@ dependencies:
   firebase_core: ^2.27.0
   flutter:
     sdk: flutter
+  provider: ^6.1.2
   google_sign_in: ^6.2.1
   http: ^1.2.0
 

@@ -12,7 +12,20 @@
           "package_name": "com.example.cvault"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "230202888134-7gfdr2ovhiu8vmgvv6e4nk3e36oe5bv0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cvault",
+            "certificate_hash": "b559ef79250ce03805af99507598b34b934bc0e1"
+          }
+        },
+        {
+          "client_id": "230202888134-5tvud4v5339qmkfv4q7qo50q87k2oeo1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD6e3APkYG3hYG4XpCyW4UuQux0R1tKHtk"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "230202888134-5tvud4v5339qmkfv4q7qo50q87k2oeo1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
