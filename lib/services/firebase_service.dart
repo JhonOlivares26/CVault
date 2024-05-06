@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cvault/models/user.dart' as cv_user;
+import 'package:cvault/widgets/Alert.dart';
 
 class FirebaseService {
   static Future<auth.User?> signInWithEmailPassword(String email, String password) async {
@@ -54,7 +56,7 @@ static Future<auth.User?> signInGoogle() async {
   }
 }
 
-static Future<auth.User?> registerWithEmailPassword(String email, String password, String name) async {
+static Future<auth.User?> registerWithEmailPassword(String email, String password, String name, BuildContext context) async {
     try {
       auth.UserCredential userCredential = await auth.FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
@@ -67,6 +69,7 @@ static Future<auth.User?> registerWithEmailPassword(String email, String passwor
           'name': name,
           'email': email,
         });
+        showAlert(context, 'Registro exitoso', 'Usuario registrado con éxito');
       }
       return user;
     } on auth.FirebaseAuthException catch (e) {

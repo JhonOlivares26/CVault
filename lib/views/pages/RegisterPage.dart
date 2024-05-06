@@ -81,7 +81,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    FirebaseService.registerWithEmailPassword(_email, _password, _firstName);
+                    FirebaseService.registerWithEmailPassword(_email, _password, _firstName, context);
                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
                   }
                 },
