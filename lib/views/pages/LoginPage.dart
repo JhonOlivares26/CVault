@@ -3,6 +3,7 @@ import 'package:cvault/services/firebase_service.dart';
 import 'package:cvault/controllers/ValidateTextFormController.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'HomePage.dart';
+import 'RegisterPage.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -62,6 +63,7 @@ class _LoginPageState extends State<LoginPage> {
                 }
               },
               child: Text('Iniciar sesión'),
+
             ),
             ElevatedButton(
               onPressed: () async {
@@ -76,6 +78,15 @@ class _LoginPageState extends State<LoginPage> {
               },
               child: const Text('Iniciar sesión con Google'),
             ),
+
+            ElevatedButton(
+              onPressed: () async {
+                // Navega a RegisterPage cuando se presione este botón
+                Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterPage()));
+              },
+              child: const Text('Registrarse'),
+            ),
+
           ],
         ),
       ),
