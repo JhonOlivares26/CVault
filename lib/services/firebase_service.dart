@@ -1,32 +1,41 @@
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cvault/models/user.dart' as cv_user;
 
+
 class FirebaseService {
   static Future<auth.User?> signInWithEmailPassword(String email, String password) async {
-  try {
-    auth.UserCredential userCredential = await auth.FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-    auth.User? user = userCredential.user;
-    if (user != null) {
-      cv_user.User customUser = cv_user.User(id: user.uid, name: user.displayName ?? 'Nombre no proporcionado', email: user.email!, photo: user.photoURL ?? 'URL de la foto no proporcionada');
-      CollectionReference users = FirebaseFirestore.instance.collection('users');
-      DocumentSnapshot docSnapshot = await users.doc(customUser.id).get();
-      if (!docSnapshot.exists) {
-        users.doc(customUser.id).set(customUser.toJson());
+    try {
+      auth.UserCredential userCredential = await auth.FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      auth.User? user = userCredential.user;
+      if (user != null) {
+        CollectionReference users = FirebaseFirestore.instance.collection('users');
+        DocumentSnapshot docSnapshot = await users.doc(user.uid).get();
+        if (docSnapshot.exists) {
+          Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
+          cv_user.User customUser = cv_user.User(
+            id: user.uid, 
+            name: user.displayName ?? 'Nombre no proporcionado', 
+            email: user.email!, 
+            photo: user.photoURL ?? 'URL de la foto no proporcionada',
+            userType: data['userType'] ?? 'Tipo de usuario no proporcionado'
+          );
+          users.doc(customUser.id).set(customUser.toJson());
+        }
       }
+      return user;
+    } on auth.FirebaseAuthException catch (e) {
+      print(e.message);
+      return null;
     }
-    return user;
-  } on auth.FirebaseAuthException catch (e) {
-    print(e.message);
-    return null;
   }
-}
 
-static Future<auth.User?> signInGoogle() async {
+  static Future<auth.User?> signInGoogle() async {
   GoogleSignIn signIn = GoogleSignIn(scopes: ['email']);
 
   GoogleSignInAccount? googleSignInAccount = await signIn.signIn();
@@ -43,7 +52,13 @@ static Future<auth.User?> signInGoogle() async {
 
     auth.User? user = userCredential.user;
     if (user != null) {
-      cv_user.User customUser = cv_user.User(id: user.uid, name: user.displayName ?? 'Nombre no proporcionado', email: user.email!, photo: user.photoURL ?? 'URL de la foto no proporcionada');
+      cv_user.User customUser = cv_user.User(
+        id: user.uid, 
+        name: user.displayName ?? 'Nombre no proporcionado', 
+        email: user.email!, 
+        photo: user.photoURL ?? 'URL de la foto no proporcionada',
+        userType: 'normal' // necesitas proporcionar un valor para userType aquí
+      );
       CollectionReference users = FirebaseFirestore.instance.collection('users');
       DocumentSnapshot docSnapshot = await users.doc(customUser.id).get();
       if (!docSnapshot.exists) {
@@ -54,7 +69,7 @@ static Future<auth.User?> signInGoogle() async {
   }
 }
 
-static Future<auth.User?> registerWithEmailPassword(String email, String password, String name) async {
+  static Future<String?> registerWithEmailPassword(String email, String password, String name, String userType) async {
     try {
       auth.UserCredential userCredential = await auth.FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
@@ -66,13 +81,14 @@ static Future<auth.User?> registerWithEmailPassword(String email, String passwor
         users.doc(user.uid).set({
           'name': name,
           'email': email,
+          'userType': userType, // Agrega el tipo de usuario al documento
         });
+        return 'Registro exitoso';
       }
-      return user;
+      return null;
     } on auth.FirebaseAuthException catch (e) {
       print(e.message);
-      return null;
+      return e.message;
     }
   }
-
 }
