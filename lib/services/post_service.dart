@@ -1,23 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cvault/models/post.dart'; // Asegúrate de reemplazar 'your_project' con el nombre de tu proyecto
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 
 class PostService {
   final CollectionReference _postCollection = FirebaseFirestore.instance.collection('posts');
 
-Future<String> createPost(Post post) async {
-  DocumentReference docRef;
-  // Verifica si el post ya tiene un id
-  if (post.id.isEmpty) {
-    // Si el id está vacío, genera un nuevo id
-    docRef = _postCollection.doc();
-    post.id = docRef.id; // Asigna el ID generado a tu post
-  } else {
-    // Si el id ya está establecido, úsalo
-    docRef = _postCollection.doc(post.id);
+Future<String> createPost(Post post, File imageFile) async {
+    DocumentReference docRef;
+    // Verifica si el post ya tiene un id
+    if (post.id.isEmpty) {
+      docRef = _postCollection.doc();
+      post.id = docRef.id; // Asigna el ID generado a tu post
+    } else {
+      docRef = _postCollection.doc(post.id);
+    }
+    final ref = FirebaseStorage.instance.ref().child('postsImages/${docRef.id}');
+    try {
+      final task = ref.putFile(imageFile);
+      final imageUrl = await (await task).ref.getDownloadURL();
+      post.imageUrl = imageUrl;
+    } catch (e) {
+      print('Error al subir archivo: $e');
+    }
+
+    await docRef.set(post.toJson());
+    return docRef.id;
   }
-  await docRef.set(post.toJson());
-  return docRef.id;
-}
 
   Future<Post> getPostById(String postId) async {
     DocumentSnapshot postDoc = await _postCollection.doc(postId).get();

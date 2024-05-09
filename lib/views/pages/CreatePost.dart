@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cvault/models/post.dart';
 import 'package:cvault/services/post_service.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Importa el paquete
+import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
 
 class CreatePostPage extends StatefulWidget {
   @override
@@ -31,19 +32,20 @@ void _submitForm() async { // Agrega async aquí
         userId: userId, // Usa el userId obtenido
         title: _title,
         description: _description,
-        imageUrl: _image?.path,
+        imageUrl: '', // Deja imageUrl vacío por ahora
         likes: 0,
         timestamp: DateTime.now(),
       );
 
-      // Crea el post y obtiene el id generado por Firebase
-      final postId = await _postService.createPost(newPost); // Agrega await aquí
-
-      // Actualiza el id del post
-      newPost.id = postId;
-    } else {
-      // Maneja el caso en que no hay un usuario autenticado
-      print('No hay un usuario autenticado');
+      if (_image != null) {
+        // Crea el post y obtiene el id generado por Firebase
+        final postId = await _postService.createPost(newPost, File(_image!.path)); // Agrega await aquí
+        // Actualiza el id del post
+        newPost.id = postId;
+      } else {
+        // Maneja el caso en que no se seleccionó una imagen
+        print('No se seleccionó una imagen');
+      }
     }
   }
 }

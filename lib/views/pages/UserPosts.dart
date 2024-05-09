@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,18 +30,33 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
             itemCount: snapshot.data?.docs.length,
             itemBuilder: (context, index) {
               final post = Post.fromFirestore(snapshot.data!.docs[index]);
-              return ListTile(
-                title: Text(post.title),
-                subtitle: Text(post.description),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    // Aquí puedes manejar la eliminación del post
-                  },
+              return Card(
+                child: Column(
+                  children: <Widget>[
+                    if (post.imageUrl != null) 
+                      Image.network(post.imageUrl!),
+                    ListTile(
+                      title: Text(post.title),
+                      subtitle: Text(post.description),
+                    ),
+                    ButtonBar(
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.edit),
+                          onPressed: () {
+                            // Aquí puedes manejar la edición del post
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            // Aquí puedes manejar la eliminación del post
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                onTap: () {
-                  // Aquí puedes manejar la edición del post
-                },
               );
             },
           );
