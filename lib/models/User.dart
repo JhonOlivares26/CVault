@@ -6,8 +6,9 @@ class User with ChangeNotifier {
   String name="";
   String email="";
   String? photo;
+  String userType; // nuevo campo
 
-  User({required this.id, required this.name, required this.email, this.photo});
+  User({required this.id, required this.name, required this.email, this.photo, required this.userType}); // actualizado
 
   factory User.fromFirestore(DocumentSnapshot userDoc) {
     Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
@@ -16,6 +17,7 @@ class User with ChangeNotifier {
       name: userData['name'],
       photo: userData['photo'],
       email: userData['email'],
+      userType: userData['userType'], // nuevo campo
     );
   }
 
@@ -25,6 +27,7 @@ class User with ChangeNotifier {
     name = userData['name'];
     photo = userData['photo'];
     email = userData['email'];
+    userType = userData['userType']; // nuevo campo
     notifyListeners();
   }
 
@@ -34,6 +37,7 @@ class User with ChangeNotifier {
       'name': name,
       'email': email,
       'photo': photo,
+      'userType': userType, // nuevo campo
     };
   }
 }

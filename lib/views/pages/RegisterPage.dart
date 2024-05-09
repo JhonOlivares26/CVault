@@ -2,6 +2,7 @@ import 'package:cvault/views/pages/LoginPage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cvault/services/firebase_service.dart';
+import 'package:cvault/widgets/Alert.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -10,7 +11,7 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
-  String _firstName = '', _email = '', _password = '', _confirmPassword = '';
+  String _firstName = '', _email = '', _password = '', _confirmPassword = '', _userType = 'normal';
 
   Future<void> registerUser(String email, String password) async {
     try {
@@ -76,18 +77,39 @@ class _RegisterPageState extends State<RegisterPage> {
                 },
                 onSaved: (value) => _confirmPassword = value!,
               ),
+              DropdownButton<String>(
+                value: _userType,
+                hint: Text('Selecciona el tipo de usuario'),
+                items: <String>['normal', 'empresa'].map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _userType = newValue!;
+                  });
+                },
+              ),
               ElevatedButton(
                 child: Text('Registrar'),
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    FirebaseService.registerWithEmailPassword(_email, _password, _firstName, context);
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                    String? result = await FirebaseService.registerWithEmailPassword(_email, _password, _firstName, _userType);
+                    if (result == 'Registro exitoso') {
+                      showAlert(context, 'Registro exitoso', 'Usuario registrado con éxito');
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                    } else {
+                      showAlert(context, 'Error', result ?? 'Error desconocido');
+                    }
                   }
                 },
               ),
             ],
           ),
+          
         ),
       ),
     );
