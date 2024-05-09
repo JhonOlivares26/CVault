@@ -1,6 +1,7 @@
 import 'package:cvault/views/pages/LoginPage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cvault/views/pages/UserPosts.dart';
 
 class NavBar extends StatelessWidget {
   final Widget body;
@@ -44,10 +45,14 @@ class NavBar extends StatelessWidget {
               leading: Icon(Icons.settings),
               title: Text('Configuración'),
               onTap: () {
-                // Actualiza el estado de la aplicación
-                // ...
-                // Luego cierra el drawer
-                Navigator.pop(context);
+                
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.article),
+              title: Text("Posts"),
+              onTap: () {             
+                Navigator.push(context, MaterialPageRoute(builder: (context) => UserPostsScreen()));
               },
             ),
             ListTile(

@@ -19,7 +19,7 @@ class Post with ChangeNotifier {
       id: postDoc.id,
       userId: postData['userId'],
       title: postData['title'], 
-      description: postData['content'],
+      description: postData['description'], // Cambia 'content' a 'description'
       imageUrl: postData['imageUrl'], // nuevo campo para la imagen
       likes: postData['likes'], // nuevo campo para los "me gustas"
       timestamp: (postData['timestamp'] as Timestamp).toDate(),
@@ -28,6 +28,7 @@ class Post with ChangeNotifier {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id, // Incluye el id del post
       'userId': userId,
       'title': title,
       'description': description,

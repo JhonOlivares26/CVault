@@ -4,9 +4,20 @@ import 'package:cvault/models/post.dart'; // Asegúrate de reemplazar 'your_proj
 class PostService {
   final CollectionReference _postCollection = FirebaseFirestore.instance.collection('posts');
 
-  Future<void> createPost(Post post) async {
-    await _postCollection.doc(post.id).set(post.toJson());
+Future<String> createPost(Post post) async {
+  DocumentReference docRef;
+  // Verifica si el post ya tiene un id
+  if (post.id.isEmpty) {
+    // Si el id está vacío, genera un nuevo id
+    docRef = _postCollection.doc();
+    post.id = docRef.id; // Asigna el ID generado a tu post
+  } else {
+    // Si el id ya está establecido, úsalo
+    docRef = _postCollection.doc(post.id);
   }
+  await docRef.set(post.toJson());
+  return docRef.id;
+}
 
   Future<Post> getPostById(String postId) async {
     DocumentSnapshot postDoc = await _postCollection.doc(postId).get();

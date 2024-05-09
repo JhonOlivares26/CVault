@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cvault/models/post.dart';
 import 'package:cvault/services/post_service.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Importa el paquete
 
 class CreatePostPage extends StatefulWidget {
   @override
@@ -10,28 +12,48 @@ class CreatePostPage extends StatefulWidget {
 class _CreatePostPageState extends State<CreatePostPage> {
   final _formKey = GlobalKey<FormState>();
   final _postService = PostService();
+  final _picker = ImagePicker();
 
   String _title = '';
   String _description = '';
-  String _imageUrl = '';
+  XFile? _image;
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+void _submitForm() async { // Agrega async aquí
+  if (_formKey.currentState!.validate()) {
+    _formKey.currentState!.save();
 
-      // Aquí debes reemplazar 'userId' y 'timestamp' con los valores reales
+    // Obtiene el userId del usuario actual
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
+    if (userId != null) {
       final newPost = Post(
-        id: DateTime.now().toString(),
-        userId: 'userId',
+        id: '', // Deja el id vacío por ahora
+        userId: userId, // Usa el userId obtenido
         title: _title,
         description: _description,
-        imageUrl: _imageUrl,
+        imageUrl: _image?.path,
         likes: 0,
         timestamp: DateTime.now(),
       );
 
-      _postService.createPost(newPost);
+      // Crea el post y obtiene el id generado por Firebase
+      final postId = await _postService.createPost(newPost); // Agrega await aquí
+
+      // Actualiza el id del post
+      newPost.id = postId;
+    } else {
+      // Maneja el caso en que no hay un usuario autenticado
+      print('No hay un usuario autenticado');
     }
+  }
+}
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = pickedFile;
+    });
   }
 
   @override
@@ -68,17 +90,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 _description = value!;
               },
             ),
-            TextFormField(
-              decoration: InputDecoration(labelText: 'URL de la imagen'),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Por favor, introduce la URL de la imagen';
-                }
-                return null;
-              },
-              onSaved: (value) {
-                _imageUrl = value!;
-              },
+            TextButton(
+              child: Text('Seleccionar imagen'),
+              onPressed: _pickImage,
             ),
             ElevatedButton(
               child: Text('Crear Post'),

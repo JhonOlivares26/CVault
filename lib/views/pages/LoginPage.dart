@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cvault/services/firebase_service.dart';
-import 'package:cvault/controllers/ValidateTextFormController.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'HomePage.dart';
 import 'RegisterPage.dart';
