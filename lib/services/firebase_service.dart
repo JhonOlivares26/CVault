@@ -36,39 +36,38 @@ class FirebaseService {
   }
 
   static Future<auth.User?> signInGoogle() async {
-    GoogleSignIn signIn = GoogleSignIn(scopes: ['email']);
+  GoogleSignIn signIn = GoogleSignIn(scopes: ['email']);
 
-    GoogleSignInAccount? googleSignInAccount = await signIn.signIn();
-    if (googleSignInAccount != null) {
-      GoogleSignInAuthentication authentication =
-          await googleSignInAccount.authentication;
+  GoogleSignInAccount? googleSignInAccount = await signIn.signIn();
+  if (googleSignInAccount != null) {
+    GoogleSignInAuthentication authentication =
+        await googleSignInAccount.authentication;
 
-      auth.OAuthCredential credential = auth.GoogleAuthProvider.credential(
-          accessToken: authentication.accessToken,
-          idToken: authentication.idToken);
+    auth.OAuthCredential credential = auth.GoogleAuthProvider.credential(
+        accessToken: authentication.accessToken,
+        idToken: authentication.idToken);
 
-      auth.UserCredential userCredential =
-          await auth.FirebaseAuth.instance.signInWithCredential(credential);
+    auth.UserCredential userCredential =
+        await auth.FirebaseAuth.instance.signInWithCredential(credential);
 
-      auth.User? user = userCredential.user;
-      if (user != null) {
-        CollectionReference users = FirebaseFirestore.instance.collection('users');
-        DocumentSnapshot docSnapshot = await users.doc(user.uid).get();
-        if (docSnapshot.exists) {
-          Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
-          cv_user.User customUser = cv_user.User(
-            id: user.uid, 
-            name: user.displayName ?? 'Nombre no proporcionado', 
-            email: user.email!, 
-            photo: user.photoURL ?? 'URL de la foto no proporcionada',
-            userType: data['userType'] ?? 'Tipo de usuario no proporcionado'
-          );
-          users.doc(customUser.id).set(customUser.toJson());
-        }
+    auth.User? user = userCredential.user;
+    if (user != null) {
+      cv_user.User customUser = cv_user.User(
+        id: user.uid, 
+        name: user.displayName ?? 'Nombre no proporcionado', 
+        email: user.email!, 
+        photo: user.photoURL ?? 'URL de la foto no proporcionada',
+        userType: 'tipo de usuario aquí' // necesitas proporcionar un valor para userType aquí
+      );
+      CollectionReference users = FirebaseFirestore.instance.collection('users');
+      DocumentSnapshot docSnapshot = await users.doc(customUser.id).get();
+      if (!docSnapshot.exists) {
+        users.doc(customUser.id).set(customUser.toJson());
       }
-      return user;
     }
+    return user;
   }
+}
 
   static Future<String?> registerWithEmailPassword(String email, String password, String name, String userType) async {
     try {
