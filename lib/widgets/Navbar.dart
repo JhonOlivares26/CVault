@@ -2,6 +2,7 @@ import 'package:cvault/views/pages/LoginPage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cvault/views/pages/UserPosts.dart';
+import 'package:cvault/views/pages/ProfilePage.dart';
 
 class NavBar extends StatelessWidget {
   final Widget body;
@@ -19,7 +20,7 @@ class NavBar extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
+            const DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.blue,
               ),
@@ -32,13 +33,12 @@ class NavBar extends StatelessWidget {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.account_circle),
-              title: Text('Perfil'),
+              leading: const Icon(Icons.account_circle),
+              title: const Text('Perfil'),
               onTap: () {
-                // Actualiza el estado de la aplicación
-                // ...
-                // Luego cierra el drawer
-                Navigator.pop(context);
+                Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ProfilePage(user: FirebaseAuth.instance.currentUser!)),
+                );
               },
             ),
             ListTile(
@@ -52,7 +52,7 @@ class NavBar extends StatelessWidget {
               leading: Icon(Icons.article),
               title: Text("Posts"),
               onTap: () {             
-                Navigator.push(context, MaterialPageRoute(builder: (context) => UserPostsScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => UserPostPage()));
               },
             ),
             ListTile(
@@ -60,7 +60,9 @@ class NavBar extends StatelessWidget {
               title: Text('Cerrar sesión'),
               onTap: () async {
                 await FirebaseAuth.instance.signOut();
-                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()),
+                  (Route<dynamic> route) => false,
+                );
               },
             ),
           ],

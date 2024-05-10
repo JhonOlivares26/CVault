@@ -3,6 +3,8 @@ import 'package:cvault/models/Post.dart';
 import 'package:cvault/services/post_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cvault/views/pages/HomePage.dart';
+import 'package:cvault/widgets/Alert.dart';
 import 'dart:io';
 
 class CreatePostPage extends StatefulWidget {
@@ -19,7 +21,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
   String _description = '';
   XFile? _image;
 
-void _submitForm() async { // Agrega async aquí
+void _submitForm() async {
   if (_formKey.currentState!.validate()) {
     _formKey.currentState!.save();
 
@@ -28,11 +30,11 @@ void _submitForm() async { // Agrega async aquí
 
     if (userId != null) {
       final newPost = Post(
-        id: '', // Deja el id vacío por ahora
+        id: '',
         userId: userId, // Usa el userId obtenido
         title: _title,
         description: _description,
-        imageUrl: '', // Deja imageUrl vacío por ahora
+        imageUrl: '',
         likes: 0,
         timestamp: DateTime.now(),
       );
@@ -42,6 +44,9 @@ void _submitForm() async { // Agrega async aquí
         final postId = await _postService.createPost(newPost, File(_image!.path)); // Agrega await aquí
         // Actualiza el id del post
         newPost.id = postId;
+        await showAlert(context, 'Registro exitoso', 'Post creado con éxito');
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomePage()),
+            (Route<dynamic> route) => false,);
       } else {
         // Maneja el caso en que no se seleccionó una imagen
         print('No se seleccionó una imagen');
