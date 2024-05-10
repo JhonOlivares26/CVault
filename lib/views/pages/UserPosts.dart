@@ -1,8 +1,10 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cvault/models/Post.dart'; // Reemplaza 'tu_paquete' con el nombre de tu paquete
+import 'package:cvault/models/Post.dart';
+import 'package:cvault/services/post_service.dart';
+import 'package:cvault/widgets/Confirmation.dart';
+import 'package:cvault/widgets/EditPostForm.dart';
 
 class UserPostsScreen extends StatefulWidget {
   @override
@@ -12,6 +14,7 @@ class UserPostsScreen extends StatefulWidget {
 class _UserPostsScreenState extends State<UserPostsScreen> {
   final _postCollection = FirebaseFirestore.instance.collection('posts');
   final _userId = FirebaseAuth.instance.currentUser?.uid;
+  final _postService = PostService();
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +29,11 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
             return Center(child: CircularProgressIndicator());
           }
 
-          return ListView.builder(
+          return GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, // Número de columnas
+              childAspectRatio: 0.54, // Relación de aspecto de cada tarjeta
+            ),
             itemCount: snapshot.data?.docs.length,
             itemBuilder: (context, index) {
               final post = Post.fromFirestore(snapshot.data!.docs[index]);
@@ -34,23 +41,45 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                 child: Column(
                   children: <Widget>[
                     if (post.imageUrl != null) 
-                      Image.network(post.imageUrl!),
+                      AspectRatio(
+                        aspectRatio: 1, // Para mantener la imagen cuadrada
+                        child: Image.network(post.imageUrl!),
+                      ),
                     ListTile(
                       title: Text(post.title),
                       subtitle: Text(post.description),
                     ),
+                    Text('Likes: ${post.likes}'), // Muestra el número de likes
                     ButtonBar(
                       children: <Widget>[
                         IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: () {
-                            // Aquí puedes manejar la edición del post
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Dialog(
+                                  child: EditPostForm(post: post),
+                                );
+                              },
+                            );
                           },
                         ),
                         IconButton(
                           icon: Icon(Icons.delete),
                           onPressed: () {
-                            // Aquí puedes manejar la eliminación del post
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ConfirmationDialog(
+                                  title: 'Confirmar eliminación',
+                                  content: '¿Estás seguro de que quieres eliminar este post?',
+                                  onConfirm: () {
+                                    _postService.deletePost(post.id); // Elimina el post
+                                  },
+                                );
+                              },
+                            );
                           },
                         ),
                       ],

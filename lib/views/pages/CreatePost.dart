@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cvault/models/post.dart';
+import 'package:cvault/models/Post.dart';
 import 'package:cvault/services/post_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
