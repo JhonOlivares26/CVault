@@ -3,6 +3,8 @@ import 'package:cvault/models/Post.dart';
 import 'package:cvault/services/post_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cvault/views/pages/HomePage.dart';
+import 'package:cvault/widgets/Alert.dart';
 import 'dart:io';
 
 class CreatePostPage extends StatefulWidget {
@@ -42,6 +44,9 @@ void _submitForm() async {
         final postId = await _postService.createPost(newPost, File(_image!.path)); // Agrega await aquí
         // Actualiza el id del post
         newPost.id = postId;
+        await showAlert(context, 'Registro exitoso', 'Post creado con éxito');
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomePage()),
+            (Route<dynamic> route) => false,);
       } else {
         // Maneja el caso en que no se seleccionó una imagen
         print('No se seleccionó una imagen');

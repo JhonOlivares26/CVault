@@ -33,7 +33,7 @@ class _UserPostPageState extends State<UserPostPage> {
           return GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, // Número de columnas
-              childAspectRatio: 0.54, // Relación de aspecto de cada tarjeta
+              childAspectRatio: 0.512, // Relación de aspecto de cada tarjeta
             ),
             itemCount: snapshot.data?.docs.length,
             itemBuilder: (context, index) {
