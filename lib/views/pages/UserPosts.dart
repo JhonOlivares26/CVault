@@ -1,10 +1,10 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cvault/models/Post.dart';
 import 'package:cvault/services/post_service.dart';
 import 'package:cvault/widgets/Confirmation.dart';
+import 'package:cvault/widgets/EditPostForm.dart';
 
 class UserPostsScreen extends StatefulWidget {
   @override
@@ -55,7 +55,14 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                         IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: () {
-                            // Aquí puedes manejar la edición del post
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Dialog(
+                                  child: EditPostForm(post: post),
+                                );
+                              },
+                            );
                           },
                         ),
                         IconButton(

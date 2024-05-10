@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cvault/models/post.dart'; // Asegúrate de reemplazar 'your_project' con el nombre de tu proyecto
+import 'package:cvault/models/Post.dart'; // Asegúrate de reemplazar 'your_project' con el nombre de tu proyecto
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 
