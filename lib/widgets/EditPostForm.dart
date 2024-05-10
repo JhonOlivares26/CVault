@@ -53,13 +53,30 @@ class _EditPostFormState extends State<EditPostForm> {
                   id: widget.post.id,
                   title: _title,
                   description: _description,
-                  userId: widget.post.userId, // Copia userId del post original
-                  likes: widget.post.likes, // Copia likes del post original
-                  timestamp: widget.post.timestamp, // Copia timestamp del post original
-                  imageUrl: widget.post.imageUrl, // Copia imageUrl del post original si existe
+                  userId: widget.post.userId,
+                  likes: widget.post.likes,
+                  timestamp: widget.post.timestamp,
+                  imageUrl: widget.post.imageUrl,
                 );
                 _postService.updatePost(updatedPost);
-                Navigator.of(context).pop();
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Confirmación'),
+                      content: const Text('El post ha sido actualizado exitosamente.'),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('OK'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
               }
             },
           ),

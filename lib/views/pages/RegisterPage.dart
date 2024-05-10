@@ -99,7 +99,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     _formKey.currentState!.save();
                     String? result = await FirebaseService.registerWithEmailPassword(_email, _password, _firstName, _userType);
                     if (result == 'Registro exitoso') {
-                      showAlert(context, 'Registro exitoso', 'Usuario registrado con éxito');
+                      await showAlert(context, 'Registro exitoso', 'Usuario registrado con éxito');
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
                     } else {
                       showAlert(context, 'Error', result ?? 'Error desconocido');
