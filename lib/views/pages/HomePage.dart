@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:cvault/widgets/Navbar.dart';
-import 'package:cvault/widgets/Footer.dart'; // Importa el widget Footer
-import 'package:cvault/views/pages/CreatePost.dart'; // Asegúrate de reemplazar 'cvault' con el nombre de tu proyecto
+import 'package:flutter/material.dart'; 
+import 'package:cvault/widgets/Navbar.dart'; 
+import 'package:cloud_firestore/cloud_firestore.dart'; 
+import 'package:cvault/widgets/Footer.dart'; 
+import 'package:cvault/widgets/PostItem.dart';
+
 
 class HomePage extends StatelessWidget {
   @override
@@ -10,28 +12,27 @@ class HomePage extends StatelessWidget {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Text(
-                    'Welcome to the Home Page!',
-                    style: TextStyle(fontSize: 24),
-                  ),
-                  ElevatedButton(
-                    child: Text('Crear Post'),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => CreatePostPage()),
-                      );
-                    },
-                  ),
-                ],
-              ),
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Algo salió mal');
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text("Cargando");
+                }
+                if (snapshot.data == null) {
+                  return Text("No hay datos");
+                }
+                return ListView(
+                  children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                    return PostItem(post: document); // Usa el widget PostItem
+                  }).toList(),
+                );
+              },
             ),
           ),
-          Footer(), // Aquí se utiliza el widget Footer
+          Footer(), 
         ],
       ),
     );

@@ -5,6 +5,7 @@ import 'package:cvault/models/Post.dart';
 import 'package:cvault/services/post_service.dart';
 import 'package:cvault/widgets/Confirmation.dart';
 import 'package:cvault/widgets/EditPostForm.dart';
+import 'package:intl/intl.dart';
 
 class UserPostPage extends StatefulWidget {
   @override
@@ -40,6 +41,7 @@ class _UserPostPageState extends State<UserPostPage> {
               return Card(
                 child: Column(
                   children: <Widget>[
+                    Text('${DateFormat('dd/MM/yyyy').format(post.timestamp)}'),
                     if (post.imageUrl != null) 
                       AspectRatio(
                         aspectRatio: 1, // Para mantener la imagen cuadrada
@@ -48,8 +50,14 @@ class _UserPostPageState extends State<UserPostPage> {
                     ListTile(
                       title: Text(post.title),
                       subtitle: Text(post.description),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min, // Para que la fila tome el menor espacio posible
+                        children: <Widget>[
+                          const Icon(Icons.favorite, color: Colors.red), // Icono de corazón
+                          Text('${post.likes}'), // Número de "likes"
+                        ],
+                      ),
                     ),
-                    Text('Likes: ${post.likes}'), // Muestra el número de likes
                     ButtonBar(
                       children: <Widget>[
                         IconButton(
