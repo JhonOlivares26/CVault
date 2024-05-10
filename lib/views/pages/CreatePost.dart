@@ -19,7 +19,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
   String _description = '';
   XFile? _image;
 
-void _submitForm() async { // Agrega async aquí
+void _submitForm() async {
   if (_formKey.currentState!.validate()) {
     _formKey.currentState!.save();
 
@@ -28,11 +28,11 @@ void _submitForm() async { // Agrega async aquí
 
     if (userId != null) {
       final newPost = Post(
-        id: '', // Deja el id vacío por ahora
+        id: '',
         userId: userId, // Usa el userId obtenido
         title: _title,
         description: _description,
-        imageUrl: '', // Deja imageUrl vacío por ahora
+        imageUrl: '',
         likes: 0,
         timestamp: DateTime.now(),
       );

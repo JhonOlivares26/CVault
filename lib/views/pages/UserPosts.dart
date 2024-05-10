@@ -6,12 +6,12 @@ import 'package:cvault/services/post_service.dart';
 import 'package:cvault/widgets/Confirmation.dart';
 import 'package:cvault/widgets/EditPostForm.dart';
 
-class UserPostsScreen extends StatefulWidget {
+class UserPostPage extends StatefulWidget {
   @override
-  _UserPostsScreenState createState() => _UserPostsScreenState();
+  _UserPostPageState createState() => _UserPostPageState();
 }
 
-class _UserPostsScreenState extends State<UserPostsScreen> {
+class _UserPostPageState extends State<UserPostPage> {
   final _postCollection = FirebaseFirestore.instance.collection('posts');
   final _userId = FirebaseAuth.instance.currentUser?.uid;
   final _postService = PostService();
