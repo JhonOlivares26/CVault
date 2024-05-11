@@ -7,27 +7,30 @@ class Footer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 60, // Define la altura del pie de página
-      color: Colors.blue, // Define el color del pie de página
+      height: 60,
+      color: Colors.blue,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround, // Centra los botones en el espacio disponible
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           IconButton(
-            icon: Icon(Icons.home), // Icono para la página de inicio
+            icon: Icon(Icons.home, color: Colors.white),
             onPressed: () {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (context) => HomePage()));
             },
           ),
           IconButton(
-            icon: Icon(Icons.add_box), // Icono para crear un post
+            icon: Icon(Icons.add_box, color: Colors.white),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => CreatePostPage()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => CreatePostPage()));
             },
           ),
           IconButton(
-            icon: Icon(Icons.notifications), // Icono para notificaciones
+            icon: Icon(Icons.notifications, color: Colors.white),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationPage()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => NotificationPage()));
             },
           ),
         ],

@@ -32,30 +32,33 @@ class _UserPostPageState extends State<UserPostPage> {
 
           return GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, // Número de columnas
-              childAspectRatio: 0.512, // Relación de aspecto de cada tarjeta
+              crossAxisCount: 2,
+              childAspectRatio: 0.512,
             ),
             itemCount: snapshot.data?.docs.length,
             itemBuilder: (context, index) {
               final post = Post.fromFirestore(snapshot.data!.docs[index]);
               return Card(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text('${DateFormat('dd/MM/yyyy').format(post.timestamp)}'),
-                    if (post.imageUrl != null) 
+                    if (post.imageUrl != null)
                       AspectRatio(
-                        aspectRatio: 1, // Para mantener la imagen cuadrada
+                        aspectRatio: 1,
                         child: Image.network(post.imageUrl!),
                       ),
-                    ListTile(
-                      title: Text(post.title),
-                      subtitle: Text(post.description),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min, // Para que la fila tome el menor espacio posible
-                        children: <Widget>[
-                          const Icon(Icons.favorite, color: Colors.red), // Icono de corazón
-                          Text('${post.likes}'), // Número de "likes"
-                        ],
+                    Expanded(
+                      child: ListTile(
+                        title: Text(post.title),
+                        subtitle: Text(post.description),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            const Icon(Icons.favorite, color: Colors.red),
+                            Text('${post.likes}'),
+                          ],
+                        ),
                       ),
                     ),
                     ButtonBar(
@@ -81,9 +84,10 @@ class _UserPostPageState extends State<UserPostPage> {
                               builder: (BuildContext context) {
                                 return ConfirmationDialog(
                                   title: 'Confirmar eliminación',
-                                  content: '¿Estás seguro de que quieres eliminar este post?',
+                                  content:
+                                      '¿Estás seguro de que quieres eliminar este post?',
                                   onConfirm: () {
-                                    _postService.deletePost(post.id); // Elimina el post
+                                    _postService.deletePost(post.id);
                                   },
                                 );
                               },

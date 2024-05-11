@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart'; 
-import 'package:cvault/widgets/Navbar.dart'; 
-import 'package:cloud_firestore/cloud_firestore.dart'; 
-import 'package:cvault/widgets/Footer.dart'; 
+import 'package:flutter/material.dart';
+import 'package:cvault/widgets/Navbar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cvault/widgets/Footer.dart';
 import 'package:cvault/widgets/PostItem.dart';
-
 
 class HomePage extends StatelessWidget {
   @override
@@ -13,8 +12,10 @@ class HomePage extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('posts').snapshots(),
-              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              stream:
+                  FirebaseFirestore.instance.collection('posts').snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
                   return Text('Algo salió mal');
                 }
@@ -25,14 +26,18 @@ class HomePage extends StatelessWidget {
                   return Text("No hay datos");
                 }
                 return ListView(
-                  children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                    return PostItem(post: document); // Usa el widget PostItem
+                  children:
+                      snapshot.data!.docs.map((DocumentSnapshot document) {
+                    return SizedBox(
+                      height: 120,
+                      child: PostItem(post: document),
+                    );
                   }).toList(),
                 );
               },
             ),
           ),
-          Footer(), 
+          Footer(),
         ],
       ),
     );
