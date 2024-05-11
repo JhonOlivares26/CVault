@@ -6,6 +6,9 @@ import 'package:cvault/models/user.dart' as cv_user;
 
 
 class FirebaseService {
+final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   static Future<auth.User?> signInWithEmailPassword(String email, String password) async {
     try {
       auth.UserCredential userCredential = await auth.FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -77,11 +80,20 @@ class FirebaseService {
       );
       auth.User? user = userCredential.user;
       if (user != null) {
+        // Actualizar la información del perfil del usuario
+        await user.updatePhotoURL('https://firebasestorage.googleapis.com/v0/b/cvault-d4348.appspot.com/o/postsImages%2FUserPorDefecto.webp?alt=media&token=d0f99bd3-cc98-47f7-9888-31a767a46883'); // URL de la imagen por defecto
+        await user.updateDisplayName(name);
+
+        // Recargar la información del usuario para obtener la URL de la foto de perfil actualizada
+        await user.reload();
+        user = auth.FirebaseAuth.instance.currentUser;
+
         CollectionReference users = FirebaseFirestore.instance.collection('users');
-        users.doc(user.uid).set({
+        users.doc(user!.uid).set({
           'name': name,
           'email': email,
           'userType': userType, // Agrega el tipo de usuario al documento
+          'photo': user.photoURL, // Agrega la URL de la foto de perfil al documento
         });
         return 'Registro exitoso';
       }
@@ -90,5 +102,13 @@ class FirebaseService {
       print(e.message);
       return e.message;
     }
+  }
+
+    Future<void> deleteAccount(String userId) async {
+    // Elimina el usuario de la colección 'users'
+    await _firestore.collection('users').doc(userId).delete();
+    // Elimina el usuario de Firebase Auth
+    auth.User? user = _auth.currentUser;
+    await user?.delete();
   }
 }
