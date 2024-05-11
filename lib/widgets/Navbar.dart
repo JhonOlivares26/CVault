@@ -37,7 +37,7 @@ class NavBar extends StatelessWidget {
               title: const Text('Perfil'),
               onTap: () {
                 Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ProfilePage(user: FirebaseAuth.instance.currentUser!)),
+                  MaterialPageRoute(builder: (context) => ProfilePage()),
                 );
               },
             ),
