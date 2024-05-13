@@ -63,7 +63,7 @@ class FirebaseService {
             name: user.displayName ?? 'Nombre no proporcionado',
             email: user.email!,
             photo: user.photoURL ?? 'URL de la foto no proporcionada',
-            userType: 'normal');
+            userType: 'Persona');
         CollectionReference users =
             FirebaseFirestore.instance.collection('users');
         DocumentSnapshot docSnapshot = await users.doc(customUser.id).get();
