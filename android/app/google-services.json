@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "230202888134-laf9kaleomounpqq0p6r8n7cvf50027k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cvault",
+            "certificate_hash": "6a8a7443777f6d7067a1a28e8cc7f9282a8a7e84"
+          }
+        },
+        {
           "client_id": "230202888134-5tvud4v5339qmkfv4q7qo50q87k2oeo1.apps.googleusercontent.com",
           "client_type": 3
         }
