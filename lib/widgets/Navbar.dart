@@ -36,7 +36,8 @@ class NavBar extends StatelessWidget {
               leading: const Icon(Icons.account_circle),
               title: const Text('Perfil'),
               onTap: () {
-                Navigator.push(context,
+                Navigator.push(
+                  context,
                   MaterialPageRoute(builder: (context) => ProfilePage()),
                 );
               },
@@ -44,15 +45,14 @@ class NavBar extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.settings),
               title: Text('Configuración'),
-              onTap: () {
-                
-              },
+              onTap: () {},
             ),
             ListTile(
               leading: Icon(Icons.article),
               title: Text("Posts"),
-              onTap: () {             
-                Navigator.push(context, MaterialPageRoute(builder: (context) => UserPostPage()));
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => UserPostPage()));
               },
             ),
             ListTile(
@@ -60,7 +60,8 @@ class NavBar extends StatelessWidget {
               title: Text('Cerrar sesión'),
               onTap: () async {
                 await FirebaseAuth.instance.signOut();
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()),
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => LoginPage()),
                   (Route<dynamic> route) => false,
                 );
               },
