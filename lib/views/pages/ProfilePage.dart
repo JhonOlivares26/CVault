@@ -168,44 +168,20 @@ class _ProfilePageState extends State<ProfilePage> {
                       icon: Icon(Icons.delete),
                       color: Colors.red,
                       onPressed: () async {
-                        bool confirm = await showDialog(
+                        await showDialog(
                           context: context,
                           builder: (BuildContext context) => ConfirmationDialog(
                             title: 'Confirmar eliminación',
-                            content:
-                                '¿Estás seguro de que quieres eliminar tu cuenta?',
+                            content: '¿Estás seguro de que quieres eliminar tu cuenta?',
                             onConfirm: () async {
-                              setState(() {
-                                _isLoading = true;
-                              });
 
-                              String userId =
-                                  auth.FirebaseAuth.instance.currentUser!.uid;
-                              await FirebaseService().deleteAccount(userId);
-
-                              setState(() {
-                                _isLoading = false;
-                              });
-
-                              await showAlert(
-                                context,
-                                'Cuenta eliminada con éxito',
-                                'No te olvidaremos',
-                              );
-                              Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                  builder: (context) => LoginPage(),
-                                ),
-                                (Route<dynamic> route) => false,
-                              );
+                              String userId = auth.FirebaseAuth.instance.currentUser!.uid; // Obtén el ID del usuario actual
+                              await FirebaseService().deleteAccount(userId); // Pasa el ID del usuario a deleteAccount
                             },
                           ),
                         );
-
-                        // Para evitar un error si el usuario cierra el diálogo sin confirmar
-                        if (confirm == null) {
-                          return;
-                        }
+                        await showAlert(context, 'Cuenta eliminada con éxito', 'no te extrañaremos');
+                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()), (Route<dynamic> route) => false);
                       },
                     ),
                   ),

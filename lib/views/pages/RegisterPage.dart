@@ -42,33 +42,44 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Registro'),
-        backgroundColor: Colors.blue, // Cambia el color del appbar
+        backgroundColor: Colors.blue.withOpacity(0.5),
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.blue, Colors.white],
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              SizedBox(height: 10),
-              Center(
-                child: Text(
-                  'CVault', // Título añadido
-                  style: TextStyle(
-                    color: Colors.white, // Color blanco
-                    fontSize: 24, // Tamaño de fuente 24
-                    fontWeight: FontWeight.bold, // Negrita
-                  ),
-                ),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: SingleChildScrollView(
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.blue.withOpacity(0.5),
+                  Colors.white,
+                  Colors.blue.withOpacity(0.5),
+                ],
+                stops: [0.1, 0.5, 0.9],
+                transform: GradientRotation(0.2),
               ),
+            ),
+        child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  SizedBox(height: 10),
+                  Center(
+                    child: Text(
+                      'CVault', // Título añadido
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24.0, // Color blanco
+                      ),
+                    ),
+                  ),
               SizedBox(height: 20), // Espacio agregado entre el título y el formulario
               Form(
                 key: _formKey,
@@ -201,6 +212,7 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         ),
       ),
+    )),
     );
   }
 }
