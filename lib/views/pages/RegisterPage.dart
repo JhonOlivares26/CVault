@@ -11,11 +11,16 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
-  String _firstName = '', _email = '', _password = '', _confirmPassword = '', _userType = 'normal';
+  String _firstName = '',
+      _email = '',
+      _password = '',
+      _confirmPassword = '',
+      _userType = 'Persona';
 
   Future<void> registerUser(String email, String password) async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -45,12 +50,14 @@ class _RegisterPageState extends State<RegisterPage> {
             children: <Widget>[
               TextFormField(
                 decoration: InputDecoration(labelText: 'Nombre'),
-                validator: (value) => value!.isEmpty ? 'El nombre es requerido' : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'El nombre es requerido' : null,
                 onSaved: (value) => _firstName = value!,
               ),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Correo'),
-                validator: (value) => value!.isEmpty ? 'El correo es requerido' : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'El correo es requerido' : null,
                 onSaved: (value) => _email = value!,
               ),
               TextFormField(
@@ -80,7 +87,8 @@ class _RegisterPageState extends State<RegisterPage> {
               DropdownButton<String>(
                 value: _userType,
                 hint: Text('Selecciona el tipo de usuario'),
-                items: <String>['normal', 'empresa'].map<DropdownMenuItem<String>>((String value) {
+                items: <String>['Persona', 'Empresa']
+                    .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -97,20 +105,25 @@ class _RegisterPageState extends State<RegisterPage> {
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    String? result = await FirebaseService.registerWithEmailPassword(_email, _password, _firstName, _userType);
+                    String? result =
+                        await FirebaseService.registerWithEmailPassword(
+                            _email, _password, _firstName, _userType);
                     if (result == 'Registro exitoso') {
-                      await showAlert(context, 'Registro exitoso', 'Usuario registrado con éxito');
-                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()),
-                      (Route<dynamic> route) => false,);
+                      await showAlert(context, 'Registro exitoso',
+                          'Usuario registrado con éxito');
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        (Route<dynamic> route) => false,
+                      );
                     } else {
-                      showAlert(context, 'Error', result ?? 'Error desconocido');
+                      showAlert(
+                          context, 'Error', result ?? 'Error desconocido');
                     }
                   }
                 },
               ),
             ],
           ),
-          
         ),
       ),
     );
