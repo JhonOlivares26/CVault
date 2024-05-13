@@ -8,7 +8,7 @@ class Footer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 60,
-      color: Colors.blue,
+      color: Colors.blue.withOpacity(0.8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
