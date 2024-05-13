@@ -154,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
                       Center(
                         // Centra el texto "Login with" en la parte inferior
                         child: Text(
-                          'Login with',
+                          'Ingresar con',
                           style: TextStyle(
                             color: Colors.black38,
                             fontWeight: FontWeight.bold,
@@ -194,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: FadeInUp(
                             duration: Duration(milliseconds: 2000),
                             child: const Text(
-                              "Don't have an account? Sign in now",
+                              "Quiero registrarme",
                               style: TextStyle(
                                   color: Color.fromRGBO(143, 148, 251, 1)),
                             )),
