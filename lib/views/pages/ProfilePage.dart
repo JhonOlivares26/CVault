@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cvault/services/firebase_service.dart';
 import 'package:cvault/widgets/Alert.dart';
 import 'package:cvault/widgets/Confirmation.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -107,6 +108,38 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<void> updatePDF() async {
+    FilePickerResult? result = await FilePicker.platform
+        .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
+
+    if (result != null) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final firebase_storage.Reference ref = firebase_storage
+          .FirebaseStorage.instance
+          .ref()
+          .child('userPDF')
+          .child('${user!.uid}.pdf');
+
+      await ref.putFile(File(result.files.single.path!));
+
+      userPdf = await ref.getDownloadURL();
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .update({
+        'userPdf': userPdf,
+      });
+
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -187,6 +220,14 @@ class _ProfilePageState extends State<ProfilePage> {
                     enabled: false,
                   ),
                   SizedBox(height: 10),
+                  if (userPdf != null)
+                    ElevatedButton(
+                      onPressed: updatePDF,
+                      child: Text(userPdf != null
+                          ? 'Cambiar hoja de vida'
+                          : 'Agregar hoja de vida'),
+                    ),
+                  if (userPdf != null) SizedBox(height: 10),
                   if (userPdf != null)
                     ElevatedButton(
                       onPressed: () async {
