@@ -26,7 +26,16 @@ class _RegisterPageState extends State<RegisterPage> {
           DateTime.now().millisecondsSinceEpoch.toString() + '.pdf';
       storage.Reference ref =
           storage.FirebaseStorage.instance.ref().child('pdfs').child(fileName);
-      await ref.putFile(pdfFile);
+
+      // Configurar el tipo de contenido del PDF
+      final metadata = storage.SettableMetadata(
+        contentType: 'application/pdf',
+      );
+
+      // Subir el archivo con el tipo de contenido especificado
+      await ref.putFile(pdfFile, metadata);
+
+      // Obtener la URL de descarga del PDF
       String downloadURL = await ref.getDownloadURL();
       return downloadURL;
     } catch (e) {
