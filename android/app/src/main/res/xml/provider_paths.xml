@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Permite el acceso a la raíz del almacenamiento externo -->
+    <external-path
+        name="external_files"
+        path="." />
+</paths>
