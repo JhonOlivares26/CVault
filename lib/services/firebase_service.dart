@@ -30,7 +30,7 @@ class FirebaseService {
             email: user.email!,
             photo: user.photoURL ?? 'URL de la foto no proporcionada',
             userType: 'Tipo de usuario no proporcionado',
-            userPdf: 'PDF no proporcionado',
+            userPdf: '',
           );
           users.doc(customUser.id).set(customUser.toJson());
         }
@@ -65,7 +65,7 @@ class FirebaseService {
           email: user.email!,
           photo: user.photoURL ?? 'URL de la foto no proporcionada',
           userType: 'Persona',
-          userPdf: 'PDF no proporcionado',
+          userPdf: '',
         );
         CollectionReference users =
             FirebaseFirestore.instance.collection('users');
@@ -78,8 +78,13 @@ class FirebaseService {
     }
   }
 
-  static Future<String?> registerWithEmailPassword(String email,
-      String password, String name, String userType, String userPdf) async {
+  static Future<String?> registerWithEmailPassword(
+    String email,
+    String password,
+    String name,
+    String userType, {
+    String? userPdf,
+  }) async {
     try {
       auth.UserCredential userCredential =
           await auth.FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -99,13 +104,17 @@ class FirebaseService {
         DocumentReference docRef = users.doc(user!.uid);
         DocumentSnapshot docSnapshot = await docRef.get();
         if (!docSnapshot.exists) {
-          users.doc(user.uid).set({
+          Map<String, dynamic> userData = {
             'name': name,
             'email': email,
             'userType': userType,
             'photo': user.photoURL,
-            'userPdf': userPdf,
-          });
+            'userPdf': "",
+          };
+          if (userPdf != null) {
+            userData['userPdf'] = userPdf;
+          }
+          users.doc(user.uid).set(userData);
         }
         return 'Registro exitoso';
       }
