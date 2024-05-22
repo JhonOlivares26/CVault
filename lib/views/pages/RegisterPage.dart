@@ -95,7 +95,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       children: <Widget>[
                         TextFormField(
                           decoration: InputDecoration(
-                            labelText: 'Nombre',
+                            labelText: 'Nombre *',
                             fillColor: Colors.white,
                             filled: true,
                             border: OutlineInputBorder(
@@ -109,7 +109,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         SizedBox(height: 10),
                         TextFormField(
                           decoration: InputDecoration(
-                            labelText: 'Correo',
+                            labelText: 'Correo *',
                             fillColor: Colors.white,
                             filled: true,
                             border: OutlineInputBorder(
@@ -123,7 +123,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         SizedBox(height: 10),
                         TextFormField(
                           decoration: InputDecoration(
-                            labelText: 'Contraseña',
+                            labelText: 'Contraseña *',
                             fillColor: Colors.white,
                             filled: true,
                             border: OutlineInputBorder(
@@ -144,7 +144,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         SizedBox(height: 10),
                         TextFormField(
                           decoration: InputDecoration(
-                            labelText: 'Confirmar Contraseña',
+                            labelText: 'Confirmar Contraseña *',
                             fillColor: Colors.white,
                             filled: true,
                             border: OutlineInputBorder(
@@ -173,7 +173,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               });
                             }
                           },
-                          child: Text('Hoja de vida (PDF)'),
+                          child: Text('Hoja de vida'),
                         ),
                         SizedBox(height: 10),
                         Center(
@@ -212,35 +212,45 @@ class _RegisterPageState extends State<RegisterPage> {
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
+                              String? result;
                               if (_selectedPdf != null) {
                                 String? downloadURL =
                                     await uploadPDF(File(_selectedPdf!));
-                                if (downloadURL != null) {
-                                  String? result = await FirebaseService
-                                      .registerWithEmailPassword(
-                                          _email,
-                                          _password,
-                                          _firstName,
-                                          _userType,
-                                          downloadURL);
-                                  if (result == 'Registro exitoso') {
-                                    await showAlert(context, 'Registro exitoso',
-                                        'Usuario registrado con éxito');
-                                    Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                          builder: (context) => LoginPage()),
-                                    );
-                                  } else {
-                                    showAlert(context, 'Error',
-                                        result ?? 'Error desconocido');
-                                  }
-                                } else {
-                                  showAlert(context, 'Error',
-                                      'Error al subir el archivo PDF');
-                                }
+
+                                result = await FirebaseService
+                                    .registerWithEmailPassword(
+                                  _email,
+                                  _password,
+                                  _firstName,
+                                  _userType,
+                                  userPdf: downloadURL,
+                                );
                               } else {
-                                showAlert(context, 'Error',
-                                    'Por favor, selecciona un archivo PDF');
+                                result = await FirebaseService
+                                    .registerWithEmailPassword(
+                                  _email,
+                                  _password,
+                                  _firstName,
+                                  _userType,
+                                );
+                              }
+                              if (result == 'Registro exitoso') {
+                                await showAlert(
+                                  context,
+                                  'Registro exitoso',
+                                  'Usuario registrado con éxito',
+                                );
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) => LoginPage(),
+                                  ),
+                                );
+                              } else {
+                                showAlert(
+                                  context,
+                                  'Error',
+                                  result ?? 'Error desconocido',
+                                );
                               }
                             }
                           },

@@ -120,7 +120,7 @@ class _ProfilePageState extends State<ProfilePage> {
       final firebase_storage.Reference ref = firebase_storage
           .FirebaseStorage.instance
           .ref()
-          .child('userPDF')
+          .child('pdfs')
           .child('${user!.uid}.pdf');
 
       await ref.putFile(File(result.files.single.path!));
@@ -220,15 +220,15 @@ class _ProfilePageState extends State<ProfilePage> {
                     enabled: false,
                   ),
                   SizedBox(height: 10),
-                  if (userPdf != null)
-                    ElevatedButton(
-                      onPressed: updatePDF,
-                      child: Text(userPdf != null
-                          ? 'Cambiar hoja de vida'
-                          : 'Agregar hoja de vida'),
-                    ),
-                  if (userPdf != null) SizedBox(height: 10),
-                  if (userPdf != null)
+                  ElevatedButton(
+                    onPressed: updatePDF,
+                    child: Text(userPdf != null && userPdf!.length > 1
+                        ? 'Cambiar hoja de vida'
+                        : 'Agregar hoja de vida'),
+                  ),
+                  if (userPdf != null && userPdf!.length > 1)
+                    SizedBox(height: 10),
+                  if (userPdf != null && userPdf!.length > 1)
                     ElevatedButton(
                       onPressed: () async {
                         if (userPdf != null) {
