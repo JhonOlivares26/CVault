@@ -1,3 +1,4 @@
+import 'package:cvault/views/pages/CreateJob.dart';
 import 'package:cvault/views/pages/LoginPage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -42,27 +43,34 @@ class NavBar extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Configuración'),
+              leading: const  Icon(Icons.settings),
+              title: const Text('Configuración'),
               onTap: () {
                 
               },
             ),
             ListTile(
-              leading: Icon(Icons.article),
-              title: Text("Posts"),
+              leading: const Icon(Icons.article),
+              title: const Text("Posts"),
               onTap: () {             
                 Navigator.push(context, MaterialPageRoute(builder: (context) => UserPostPage()));
               },
             ),
             ListTile(
-              leading: Icon(Icons.exit_to_app),
-              title: Text('Cerrar sesión'),
+              leading: const Icon(Icons.exit_to_app),
+              title: const Text('Cerrar sesión'),
               onTap: () async {
                 await FirebaseAuth.instance.signOut();
                 Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()),
                   (Route<dynamic> route) => false,
                 );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.article),
+              title: const Text("Jobs"),
+              onTap: () {             
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CreateJobPage()));
               },
             ),
           ],

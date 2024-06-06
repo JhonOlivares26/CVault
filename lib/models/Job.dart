@@ -5,11 +5,14 @@ class Job with ChangeNotifier {
   String id;
   String title;
   String description;
+  String location;
+  String modality;
+  String salary;
   String companyId;
   String companyName;
   List<String> applicants;
 
-  Job({required this.id, required this.title, required this.description, required this.companyId, required this.companyName, required this.applicants});
+  Job({required this.id, required this.title, required this.description, required this.location, required this.modality, required this.salary, required this.companyId, required this.companyName, required this.applicants});
 
   factory Job.fromFirestore(DocumentSnapshot jobDoc) {
     Map<String, dynamic> jobData = jobDoc.data() as Map<String, dynamic>;
@@ -17,6 +20,9 @@ class Job with ChangeNotifier {
       id: jobDoc.id,
       title: jobData['title'],
       description: jobData['description'],
+      location: jobData['location'],
+      modality: jobData['modality'],
+      salary: jobData['salary'],
       companyId: jobData['companyId'],
       companyName: jobData['companyName'],
       applicants: List<String>.from(jobData['applicants']),
@@ -28,6 +34,9 @@ class Job with ChangeNotifier {
       'id': id,
       'title': title,
       'description': description,
+      'location': location,
+      'modality': modality,
+      'salary': salary,
       'companyId': companyId,
       'companyName': companyName,
       'applicants': applicants,
