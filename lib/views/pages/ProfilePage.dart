@@ -1,13 +1,19 @@
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:cvault/services/firebase_service.dart';
+import 'package:cvault/widgets/Alert.dart';
+import 'package:cvault/widgets/Confirmation.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:image_picker/image_picker.dart';
-import 'package:cvault/services/firebase_service.dart';
-import 'package:cvault/widgets/Confirmation.dart';
-import 'package:cvault/views/pages/LoginPage.dart';
-import 'package:cvault/widgets/Alert.dart';
+
+import 'LoginPage.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -20,6 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String? name;
   String? userType;
   String? photo;
+  String? userPdf;
   bool _isLoading = false;
 
   Future<void> pickImage() async {
@@ -41,7 +48,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
       photo = await ref.getDownloadURL();
 
-      // Actualiza el campo 'photo' en Firestore
       await FirebaseFirestore.instance
           .collection('users')
           .doc(user!.uid)
@@ -63,7 +69,6 @@ class _ProfilePageState extends State<ProfilePage> {
         _isLoading = true;
       });
 
-      // Actualiza solo el campo 'name' en Firestore
       await FirebaseFirestore.instance
           .collection('users')
           .doc(user!.uid)
@@ -73,6 +78,61 @@ class _ProfilePageState extends State<ProfilePage> {
 
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Perfil actualizado')));
+
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> downloadAndOpenPdf(String pdfUrl) async {
+    final response = await http.get(Uri.parse(pdfUrl));
+
+    if (response.statusCode == 200) {
+      final Uint8List bytes = response.bodyBytes;
+
+      final tempDir = await getTemporaryDirectory();
+      final tempPath = tempDir.path;
+
+      final File file = File('$tempPath/profile.pdf');
+
+      await file.writeAsBytes(bytes);
+
+      OpenFile.open(file.path);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al descargar el PDF'),
+        ),
+      );
+    }
+  }
+
+  Future<void> updatePDF() async {
+    FilePickerResult? result = await FilePicker.platform
+        .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
+
+    if (result != null) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final firebase_storage.Reference ref = firebase_storage
+          .FirebaseStorage.instance
+          .ref()
+          .child('pdfs')
+          .child('${user!.uid}.pdf');
+
+      await ref.putFile(File(result.files.single.path!));
+
+      userPdf = await ref.getDownloadURL();
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .update({
+        'userPdf': userPdf,
+      });
 
       setState(() {
         _isLoading = false;
@@ -101,10 +161,14 @@ class _ProfilePageState extends State<ProfilePage> {
             return Center(child: CircularProgressIndicator());
           }
 
+          if (!snapshot.hasData || !snapshot.data!.exists) {
+            return Text('Usuario no encontrado');
+          }
+
           Map<String, dynamic> data =
               snapshot.data!.data() as Map<String, dynamic>;
-          photo = data[
-              'photo']; // Asigna el valor de 'photo' a partir de los datos del snapshot
+          photo = data['photo'];
+          userPdf = data['userPdf'];
 
           return Form(
             key: _formKey,
@@ -155,6 +219,24 @@ class _ProfilePageState extends State<ProfilePage> {
                     decoration: InputDecoration(labelText: 'Email'),
                     enabled: false,
                   ),
+                  SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: updatePDF,
+                    child: Text(userPdf != null && userPdf!.length > 1
+                        ? 'Cambiar hoja de vida'
+                        : 'Agregar hoja de vida'),
+                  ),
+                  if (userPdf != null && userPdf!.length > 1)
+                    SizedBox(height: 10),
+                  if (userPdf != null && userPdf!.length > 1)
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (userPdf != null) {
+                          await downloadAndOpenPdf(userPdf!);
+                        }
+                      },
+                      child: Text('Ver PDF'),
+                    ),
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: saveProfile,
@@ -168,44 +250,25 @@ class _ProfilePageState extends State<ProfilePage> {
                       icon: Icon(Icons.delete),
                       color: Colors.red,
                       onPressed: () async {
-                        bool confirm = await showDialog(
+                        await showDialog(
                           context: context,
                           builder: (BuildContext context) => ConfirmationDialog(
                             title: 'Confirmar eliminación',
                             content:
                                 '¿Estás seguro de que quieres eliminar tu cuenta?',
                             onConfirm: () async {
-                              setState(() {
-                                _isLoading = true;
-                              });
-
                               String userId =
                                   auth.FirebaseAuth.instance.currentUser!.uid;
                               await FirebaseService().deleteAccount(userId);
-
-                              setState(() {
-                                _isLoading = false;
-                              });
-
-                              await showAlert(
-                                context,
-                                'Cuenta eliminada con éxito',
-                                'No te olvidaremos',
-                              );
-                              Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                  builder: (context) => LoginPage(),
-                                ),
-                                (Route<dynamic> route) => false,
-                              );
                             },
                           ),
                         );
-
-                        // Para evitar un error si el usuario cierra el diálogo sin confirmar
-                        if (confirm == null) {
-                          return;
-                        }
+                        await showAlert(context, 'Cuenta eliminada con éxito',
+                            'No te extrañaremos');
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()),
+                            (Route<dynamic> route) => false);
                       },
                     ),
                   ),

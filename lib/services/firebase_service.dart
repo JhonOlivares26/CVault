@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cvault/models/user.dart' as cv_user;
+import 'package:cvault/models/user.dart';
 
 class FirebaseService {
   final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
@@ -23,12 +23,13 @@ class FirebaseService {
         if (docSnapshot.exists) {
           print("El usuario ya existe en Firestore");
         } else {
-          cv_user.User customUser = cv_user.User(
+          User customUser = User(
             id: user.uid,
             name: user.displayName ?? 'Nombre no proporcionado',
             email: user.email!,
             photo: user.photoURL ?? 'URL de la foto no proporcionada',
             userType: 'Tipo de usuario no proporcionado',
+            userPdf: '',
           );
           users.doc(customUser.id).set(customUser.toJson());
         }
@@ -57,12 +58,14 @@ class FirebaseService {
 
       auth.User? user = userCredential.user;
       if (user != null) {
-        cv_user.User customUser = cv_user.User(
-            id: user.uid,
-            name: user.displayName ?? 'Nombre no proporcionado',
-            email: user.email!,
-            photo: user.photoURL ?? 'URL de la foto no proporcionada',
-            userType: 'normal');
+        User customUser = User(
+          id: user.uid,
+          name: user.displayName ?? 'Nombre no proporcionado',
+          email: user.email!,
+          photo: user.photoURL ?? 'URL de la foto no proporcionada',
+          userType: 'Persona',
+          userPdf: '',
+        );
         CollectionReference users =
             FirebaseFirestore.instance.collection('users');
         DocumentSnapshot docSnapshot = await users.doc(customUser.id).get();
@@ -76,7 +79,12 @@ class FirebaseService {
   }
 
   static Future<String?> registerWithEmailPassword(
-      String email, String password, String name, String userType) async {
+    String email,
+    String password,
+    String name,
+    String userType, {
+    String? userPdf,
+  }) async {
     try {
       auth.UserCredential userCredential =
           await auth.FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -85,23 +93,29 @@ class FirebaseService {
       );
       auth.User? user = userCredential.user;
       if (user != null) {
-        // Actualizar la información del perfil del usuario
         await user.updatePhotoURL(
-            'https://firebasestorage.googleapis.com/v0/b/cvault-d4348.appspot.com/o/postsImages%2FUserPorDefecto.webp?alt=media&token=d0f99bd3-cc98-47f7-9888-31a767a46883'); // URL de la imagen por defecto
+            'https://firebasestorage.googleapis.com/v0/b/cvault-d4348.appspot.com/o/postsImages%2FUserPorDefecto.webp?alt=media&token=d0f99bd3-cc98-47f7-9888-31a767a46883');
         await user.updateDisplayName(name);
-
-        // Recargar la información del usuario para obtener la URL de la foto de perfil actualizada
         await user.reload();
         user = auth.FirebaseAuth.instance.currentUser;
 
         CollectionReference users =
             FirebaseFirestore.instance.collection('users');
-        users.doc(user!.uid).set({
-          'name': name,
-          'email': email,
-          'userType': userType, // Agrega el tipo de usuario al documento
-          'photo': user.photoURL,
-        });
+        DocumentReference docRef = users.doc(user!.uid);
+        DocumentSnapshot docSnapshot = await docRef.get();
+        if (!docSnapshot.exists) {
+          Map<String, dynamic> userData = {
+            'name': name,
+            'email': email,
+            'userType': userType,
+            'photo': user.photoURL,
+            'userPdf': "",
+          };
+          if (userPdf != null) {
+            userData['userPdf'] = userPdf;
+          }
+          users.doc(user.uid).set(userData);
+        }
         return 'Registro exitoso';
       }
       return null;
@@ -112,9 +126,7 @@ class FirebaseService {
   }
 
   Future<void> deleteAccount(String userId) async {
-    // Elimina el usuario de la colección 'users'
     await _firestore.collection('users').doc(userId).delete();
-    // Elimina el usuario de Firebase Auth
     auth.User? user = _auth.currentUser;
     await user?.delete();
   }
