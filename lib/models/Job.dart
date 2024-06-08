@@ -29,6 +29,20 @@ class Job with ChangeNotifier {
     );
   }
 
+  factory Job.fromMap(Map<String, dynamic> jobData) {
+  return Job(
+    id: jobData['id'] ?? '',
+    title: jobData['title'] ?? '',
+    description: jobData['description'] ?? '',
+    location: jobData['location'] ?? '',
+    modality: jobData['modality'] ?? '',
+    salary: jobData['salary'] ?? '',
+    companyId: jobData['companyId'] ?? '',
+    companyName: jobData['companyName'] ?? '',
+    applicants: jobData['applicants'] != null ? List<String>.from(jobData['applicants']) : [],
+  );
+}
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
