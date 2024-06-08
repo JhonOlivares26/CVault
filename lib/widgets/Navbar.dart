@@ -14,7 +14,7 @@ class NavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('CVault'),
+        title: const Text('CVault'),
       ),
       body: body,
       drawer: Drawer(

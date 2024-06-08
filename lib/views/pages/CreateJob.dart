@@ -1,10 +1,10 @@
 import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:cvault/models/Job.dart';
 import 'package:cvault/services/jobs_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:cvault/services/user_service.dart';
 
 class CreateJobPage extends StatefulWidget {
   @override
@@ -25,12 +25,17 @@ class _CreateJobPageState extends State<CreateJobPage> {
   List<String> _modalityOptions = ['Remoto', 'Presencial', 'Mixto'];
   List<String> _locationOptions = ['Medellín', 'Bogotá', 'California', 'Otro lugar'];
 
+  final UserService _userService = UserService();
+
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
       // Obtiene el userId del usuario actual
       final userId = FirebaseAuth.instance.currentUser?.uid;
+
+      // Obtiene la información del usuario actual
+      final user = await _userService.getUser(userId);
 
       // Aquí es donde se crea el trabajo
       Job job = Job(
@@ -41,7 +46,7 @@ class _CreateJobPageState extends State<CreateJobPage> {
         modality: _modality,
         salary: _salary.toString(),
         companyId: userId!, // Usa el userId como companyId
-        companyName: 'nombre de la empresa', // Reemplaza esto con el nombre de la empresa actual
+        companyName: user.name, // Reemplaza esto con el nombre de la empresa actual
         applicants: [],
       );
 
