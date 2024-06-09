@@ -1,3 +1,4 @@
+import 'package:cvault/views/pages/ResetPasswordPage.dart';
 import 'package:flutter/material.dart';
 import 'package:cvault/services/firebase_service.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
@@ -140,7 +141,11 @@ class _LoginPageState extends State<LoginPage> {
                         child: Text('Iniciar sesión'),
                       ),
                       TextButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ResetPasswordPage()));
                           // Para la función de recuperar en el futuro
                         },
                         child: Text(
