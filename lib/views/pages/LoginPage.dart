@@ -3,6 +3,7 @@ import 'package:cvault/services/firebase_service.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'HomePage.dart';
 import 'RegisterPage.dart';
+import 'ResetPasswordPage.dart';
 import 'package:animate_do/animate_do.dart';
 
 class LoginPage extends StatefulWidget {
@@ -108,17 +109,6 @@ class _LoginPageState extends State<LoginPage> {
                             },
                           ),
                         ),
-                        TextButton(
-                          onPressed: () {
-                            // Para la funcion de recuperar en el futuro
-                          },
-                          child: Text(
-                            'Olvidé mi contraseña',
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
                         ElevatedButton(
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
@@ -143,11 +133,11 @@ class _LoginPageState extends State<LoginPage> {
                           child: Text('Iniciar sesión'),
                         ),
                         SizedBox(
-                          height: 40,
+                          height: 20,
                         ),
                         FadeIn(
                           child: Text(
-                            '----------------------- Or Login with ------------------------',
+                            '----------------------- O iniciar con ------------------------',
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
@@ -179,6 +169,27 @@ class _LoginPageState extends State<LoginPage> {
                           height: 20,
                         ),
                         TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ResetPasswordPage(),
+                              ),
+                            );
+                          },
+                          child: FadeInUp(
+                            duration: Duration(milliseconds: 2000),
+                            child: const Text(
+                              "Olvidé mi contraseña",
+                              style: TextStyle(
+                                  color: Color.fromRGBO(143, 148, 251, 1)),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        TextButton(
                           onPressed: () async {
                             Navigator.push(
                                 context,
@@ -186,12 +197,13 @@ class _LoginPageState extends State<LoginPage> {
                                     builder: (context) => RegisterPage()));
                           },
                           child: FadeInUp(
-                              duration: Duration(milliseconds: 2000),
-                              child: const Text(
-                                "Don't have an account? Sign in now",
-                                style: TextStyle(
-                                    color: Color.fromRGBO(143, 148, 251, 1)),
-                              )),
+                            duration: Duration(milliseconds: 2000),
+                            child: const Text(
+                              "¿No tienes una cuenta? Regístrate ahora",
+                              style: TextStyle(
+                                  color: Color.fromRGBO(143, 148, 251, 1)),
+                            ),
+                          ),
                         ),
                       ],
                     ),
