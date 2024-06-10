@@ -17,13 +17,13 @@ class HomePage extends StatelessWidget {
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
-                  return Text('Algo salió mal');
+                  return const Text('Algo salió mal');
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Text("Cargando");
+                  return const Text("Cargando");
                 }
                 if (snapshot.data == null) {
-                  return Text("No hay datos");
+                  return const Text("No hay datos");
                 }
                 return ListView(
                   children:

@@ -60,6 +60,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    print('Iniciando _getUserTypeAndApplicants');
 
     setState(() {
       _image = pickedFile;
