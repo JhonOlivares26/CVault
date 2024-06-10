@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cvault/views/pages/UserPosts.dart';
 import 'package:cvault/views/pages/ProfilePage.dart';
+import 'package:cvault/views/pages/SearchSkills.dart';
 
 class NavBar extends StatelessWidget {
   final Widget body;
@@ -43,9 +44,14 @@ class NavBar extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Configuración'),
-              onTap: () {},
+              leading: Icon(Icons.search),
+              title: Text('Buscar Skills'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SearchSkills()),
+                );
+              },
             ),
             ListTile(
               leading: Icon(Icons.article),
