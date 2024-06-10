@@ -5,6 +5,7 @@ class User with ChangeNotifier {
   String id;
   String name = "";
   String email = "";
+  String skills = "";
   String? photo;
   String userType;
   String? userPdf;
@@ -13,6 +14,7 @@ class User with ChangeNotifier {
     required this.id,
     required this.name,
     required this.email,
+    required this.skills,
     this.photo,
     required this.userType,
     this.userPdf,
@@ -25,6 +27,7 @@ class User with ChangeNotifier {
       name: userData['name'],
       photo: userData['photo'],
       email: userData['email'],
+      skills: userData['skills'],
       userType: userData['userType'],
       userPdf: userData['userPdf'],
     );
@@ -36,6 +39,7 @@ class User with ChangeNotifier {
     name = userData['name'];
     photo = userData['photo'];
     email = userData['email'];
+    skills = userData['skills'];
     userType = userData['userType'];
     userPdf = userData['userPdf'];
     notifyListeners();
@@ -46,6 +50,7 @@ class User with ChangeNotifier {
       'id': id,
       'name': name,
       'email': email,
+      'skills': skills,
       'photo': photo,
       'userType': userType,
       'userPdf': userPdf,
