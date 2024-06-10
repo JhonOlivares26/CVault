@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cvault/views/pages/UserPosts.dart';
 import 'package:cvault/views/pages/ProfilePage.dart';
-import 'package:cvault/models/User.dart' as uuser;
-import 'package:cvault/services/user_service.dart';
 
 class NavBar extends StatelessWidget {
   final UserService _userService = UserService();
@@ -16,19 +14,7 @@ class NavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _userService.getUser(FirebaseAuth.instance.currentUser?.uid),
-      builder: (BuildContext context, AsyncSnapshot<uuser.User> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container(); // Muestra un contenedor vacío mientras se obtiene el usuario
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}'); // Muestra un mensaje de error si algo sale mal
-        } else {
-          uuser.User user = snapshot.data!;
 
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('CVault'),
             ),
             drawer: Drawer(
               child: ListView(
