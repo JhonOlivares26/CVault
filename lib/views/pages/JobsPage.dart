@@ -27,7 +27,7 @@ class JobsPage extends StatelessWidget {
           return NavBar(
             body: Column(
               children: <Widget>[
-                if (user.userType == 'empresa')
+                if (user.userType == 'Empresa')
                   ElevatedButton(
                     onPressed: () {
                       Navigator.push(

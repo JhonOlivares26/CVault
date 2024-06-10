@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cvault/models/Job.dart';
+
 
 class ApplicationsPage extends StatefulWidget {
   @override
@@ -15,7 +15,7 @@ class _ApplicationsPageState extends State<ApplicationsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mis trabajos'),
+        title: Text('Postulaciones'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('jobs').where('applicants', arrayContains: currentUser?.uid).snapshots(),

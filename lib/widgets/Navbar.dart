@@ -28,7 +28,7 @@ class NavBar extends StatelessWidget {
 
           return Scaffold(
             appBar: AppBar(
-              title: Text('Home Page'),
+              title: Text('CVault'),
             ),
             drawer: Drawer(
               child: ListView(
@@ -77,7 +77,7 @@ class NavBar extends StatelessWidget {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => ApplicationsPage()));
                   },
                 ),
-                if (user.userType == 'empresa') 
+                if (user.userType == 'Empresa') 
                 ListTile(
                   leading: const Icon(Icons.work_outlined),
                   title: const Text("Empleos publicados"),

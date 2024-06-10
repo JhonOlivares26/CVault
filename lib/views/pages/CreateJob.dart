@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:cvault/models/Job.dart';
 import 'package:cvault/services/jobs_service.dart';
@@ -46,7 +45,7 @@ class _CreateJobPageState extends State<CreateJobPage> {
         modality: _modality,
         salary: _salary.toString(),
         companyId: userId!, // Usa el userId como companyId
-        companyName: user.name, // Reemplaza esto con el nombre de la empresa actual
+        companyName: user.name, 
         applicants: [],
       );
 

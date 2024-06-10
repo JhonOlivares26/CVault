@@ -1,7 +1,9 @@
+import 'package:cvault/views/pages/JobDetails.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cvault/models/Job.dart';
+import 'JobsCompanyDetails.dart';
+import 'package:cvault/views/pages/JobsCompanyDetails.dart';
 
 class CompanyJobsPage extends StatefulWidget {
   @override
@@ -24,7 +26,7 @@ class _CompanyJobsPageState extends State<CompanyJobsPage> {
             return Text('Ha ocurrido un error: ${snapshot.error}');
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text("Cargando...");
+            return const Text("Cargando...");
           }
           return ListView(
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
@@ -32,6 +34,14 @@ class _CompanyJobsPageState extends State<CompanyJobsPage> {
               return ListTile(
                 title: Text(data['title']),
                 subtitle: Text(data['description']),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => JobsCompanyDetails(jobData: data),
+                    ),
+                  );
+                },
               );
             }).toList(),
           );
