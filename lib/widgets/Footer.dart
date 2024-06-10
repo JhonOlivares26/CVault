@@ -36,7 +36,7 @@ class Footer extends StatelessWidget {
                         context, MaterialPageRoute(builder: (context) => HomePage()));
                   },
                 ),
-                if (user.userType == 'Persona')
+                //if (user.userType == 'Persona')
                 IconButton(
                   icon: Icon(Icons.work, color: Colors.white),
                   onPressed: () {
