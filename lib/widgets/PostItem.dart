@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:cvault/views/pages/PostDetails.dart';
+import 'package:cvault/services/post_service.dart'; // Importa el servicio PostService
 
 class PostItem extends StatefulWidget {
   final DocumentSnapshot post;
@@ -14,6 +15,7 @@ class PostItem extends StatefulWidget {
 
 class _PostItemState extends State<PostItem> {
   bool isLiked = false;
+  final PostService _postService = PostService(); // Instancia del servicio PostService
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +27,7 @@ class _PostItemState extends State<PostItem> {
           context,
           MaterialPageRoute(
             builder: (context) => PostDetails(
+              userId: data['userId'],
               title: data['title'],
               imageUrl: data['imageUrl'],
               description: data['description'],
@@ -43,7 +46,7 @@ class _PostItemState extends State<PostItem> {
                 width: 100,
                 child: Image.network(data['imageUrl'], fit: BoxFit.cover),
               ),
-              SizedBox(width: 12),
+              SizedBox(width: 1.0),  
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,16 +55,32 @@ class _PostItemState extends State<PostItem> {
                       data['title'],
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 8.0),
+                    SizedBox(height: 1.0),
                     Text(
                       data['description'],
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: 8.0),
+                    SizedBox(height: 1.0),
                     Text(
                       '${DateFormat('dd/MM/yyyy').format((data['timestamp'] as Timestamp).toDate())}',
                       style: TextStyle(color: Colors.grey),
+                    ),
+                    SizedBox(height: 5.0),
+                    FutureBuilder<String>(
+                      future: _postService.getUserName(data['userId']), // Llama al método _getUserName del servicio PostService
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return CircularProgressIndicator(); // Muestra un indicador de carga mientras se obtiene el nombre del usuario
+                        } else if (snapshot.hasError) {
+                          return Text('Error al obtener el nombre del usuario'); // Muestra un mensaje de error si hay algún problema al obtener el nombre del usuario
+                        } else {
+                          return Text(
+                            'Publicado por: ${snapshot.data}',
+                            style: TextStyle(color: Colors.grey),
+                          ); // Muestra el nombre del usuario obtenido del servicio
+                        }
+                      },
                     ),
                   ],
                 ),

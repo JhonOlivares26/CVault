@@ -29,7 +29,7 @@ class HomePage extends StatelessWidget {
                   children:
                       snapshot.data!.docs.map((DocumentSnapshot document) {
                     return SizedBox(
-                      height: 120,
+                      height: 130,
                       child: PostItem(post: document),
                     );
                   }).toList(),
