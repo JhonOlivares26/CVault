@@ -1,3 +1,4 @@
+import 'package:cvault/views/pages/ApplicationsPage.dart';
 import 'package:cvault/views/pages/CreateJob.dart';
 import 'package:cvault/views/pages/LoginPage.dart';
 import 'package:flutter/material.dart';
@@ -72,6 +73,13 @@ class NavBar extends StatelessWidget {
               title: const Text("Jobs"),
               onTap: () {             
                 Navigator.push(context, MaterialPageRoute(builder: (context) => CreateJobPage()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.article),
+              title: const Text("Postulaciones"),
+              onTap: () {             
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ApplicationsPage()));
               },
             ),
           ],
