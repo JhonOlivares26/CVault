@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cvault/views/pages/UserProfile.dart'; // Asegúrate de importar correctamente UserProfile
 
 class SearchSkills extends StatefulWidget {
   @override
@@ -74,17 +75,39 @@ class _SearchSkillsState extends State<SearchSkills> {
                     final userData = userDoc.data() as Map<String, dynamic>;
                     final skills = (userData['skills'] ?? '').toString();
 
-                    return ListTile(
-                      leading: userData['photo'] != null
-                          ? CircleAvatar(
-                              backgroundImage: NetworkImage(userData['photo']),
-                            )
-                          : CircleAvatar(
-                              child: Icon(Icons.person),
-                            ),
-                      title: Text(userData['name'] ?? 'Sin nombre'),
-                      subtitle:
-                          Text(skills.length < 2 ? 'Sin habilidades' : skills),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6.0, vertical: 2.0),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6.0),
+                        ),
+                        elevation: 4,
+                        child: ListTile(
+                          leading: userData['photo'] != null
+                              ? CircleAvatar(
+                                  backgroundImage:
+                                      NetworkImage(userData['photo']),
+                                )
+                              : CircleAvatar(
+                                  child: Icon(Icons.person),
+                                ),
+                          title: Text(userData['name'] ?? 'Sin nombre'),
+                          subtitle: Text(
+                              skills.length < 2 ? 'Sin habilidades' : skills),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UserProfile(
+                                  userData: userData,
+                                  context: context, // Agrega el contexto aquí
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     );
                   },
                 );
