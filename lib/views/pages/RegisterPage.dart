@@ -15,6 +15,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   String _firstName = '';
   String _email = '';
+  String _skills = '';
   String _password = '';
   String _confirmPassword = '';
   String _userType = 'Persona';
@@ -220,6 +221,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 result = await FirebaseService
                                     .registerWithEmailPassword(
                                   _email,
+                                  _skills,
                                   _password,
                                   _firstName,
                                   _userType,
@@ -229,6 +231,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 result = await FirebaseService
                                     .registerWithEmailPassword(
                                   _email,
+                                  _skills,
                                   _password,
                                   _firstName,
                                   _userType,

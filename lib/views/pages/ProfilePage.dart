@@ -27,6 +27,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String? userType;
   String? photo;
   String? userPdf;
+  String? skills;
   bool _isLoading = false;
 
   Future<void> pickImage() async {
@@ -74,6 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
           .doc(user!.uid)
           .update({
         'name': name,
+        'skills': skills?.toUpperCase(),
       });
 
       ScaffoldMessenger.of(context)
@@ -218,6 +220,14 @@ class _ProfilePageState extends State<ProfilePage> {
                     initialValue: data['email'],
                     decoration: InputDecoration(labelText: 'Email'),
                     enabled: false,
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    initialValue: data['skills'],
+                    decoration: InputDecoration(labelText: 'Skills'),
+                    onSaved: (value) {
+                      skills = value?.toUpperCase();
+                    },
                   ),
                   SizedBox(height: 10),
                   ElevatedButton(
