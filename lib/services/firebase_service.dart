@@ -28,6 +28,7 @@ class FirebaseService {
             id: user.uid,
             name: user.displayName ?? 'Nombre no proporcionado',
             email: user.email!,
+            skills: '',
             photo: user.photoURL ?? 'URL de la foto no proporcionada',
             userType: 'Tipo de usuario no proporcionado',
             userPdf: '',
@@ -63,6 +64,7 @@ class FirebaseService {
           id: user.uid,
           name: user.displayName ?? 'Nombre no proporcionado',
           email: user.email!,
+          skills: '',
           photo: user.photoURL ?? 'URL de la foto no proporcionada',
           userType: 'Persona',
           userPdf: '',
@@ -80,6 +82,7 @@ class FirebaseService {
 
   static Future<String?> registerWithEmailPassword(
     String email,
+    String? skills,
     String password,
     String name,
     String userType, {
@@ -107,6 +110,7 @@ class FirebaseService {
           Map<String, dynamic> userData = {
             'name': name,
             'email': email,
+            'skills': "",
             'userType': userType,
             'photo': user.photoURL,
             'userPdf': "",
