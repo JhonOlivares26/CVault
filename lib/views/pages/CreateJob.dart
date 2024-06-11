@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:cvault/services/user_service.dart';
 import 'package:cvault/widgets/Alert.dart';
+import 'JobsPage.dart'; // Importa la página de trabajos
 
 class CreateJobPage extends StatefulWidget {
   @override
@@ -23,7 +24,7 @@ class _CreateJobPageState extends State<CreateJobPage> {
 
   // Opciones para los campos de modalidad y ubicación
   List<String> _modalityOptions = ['Remoto', 'Presencial', 'Mixto'];
-  List<String> _locationOptions = ['Medellín', 'Bogotá', 'California', 'Buenos Aires'];
+  List<String> _locationOptions = ['Medellín', 'Bogotá', 'California', 'Otro'];
 
   final UserService _userService = UserService();
 
@@ -46,7 +47,7 @@ class _CreateJobPageState extends State<CreateJobPage> {
         modality: _modality,
         salary: _salary.toString(),
         companyId: userId!, // Usa el userId como companyId
-        companyName: user.name, 
+        companyName: user.name,
         applicants: [],
       );
 
@@ -54,9 +55,15 @@ class _CreateJobPageState extends State<CreateJobPage> {
 
       showAlert(
         context,
-        'Postulación exitosa',
-        'Has solicitado el empleo exitosamente.',
-      );
+        'Publicación de empleo exitosa',
+        'Empleo publicado exitosamente.',
+      ).then((_) {
+        Navigator.pushReplacement(
+          // Redirige a la página de trabajos
+          context,
+          MaterialPageRoute(builder: (context) => JobsPage()),
+        );
+      });
     }
   }
 
@@ -75,8 +82,11 @@ class _CreateJobPageState extends State<CreateJobPage> {
               children: <Widget>[
                 const SizedBox(height: 30.0),
                 TextFormField(
-                  decoration: const InputDecoration(labelText: 'Cargo del empleo'),
-                  validator: (input) => input!.trim().length < 1 ? 'Por favor, introduce un título válido' : null,
+                  decoration:
+                      const InputDecoration(labelText: 'Cargo del empleo'),
+                  validator: (input) => input!.trim().length < 1
+                      ? 'Por favor, introduce un título válido'
+                      : null,
                   onSaved: (input) => _title = input!,
                 ),
                 const SizedBox(height: 15.0),
@@ -102,7 +112,8 @@ class _CreateJobPageState extends State<CreateJobPage> {
                       return _locationOptions; // Devuelve todas las opciones si el usuario no ha escrito nada
                     }
                     return _locationOptions.where((String option) {
-                      return option.contains(textEditingValue.text.toLowerCase());
+                      return option
+                          .contains(textEditingValue.text.toLowerCase());
                     });
                   },
                   onSelected: (String selection) {
@@ -113,8 +124,11 @@ class _CreateJobPageState extends State<CreateJobPage> {
                 ),
                 const SizedBox(height: 15.0),
                 TextFormField(
-                  decoration: const InputDecoration(labelText: 'Descripción del empleo'),
-                  validator: (input) => input!.trim().length < 1 ? 'Por favor, introduce una descripción válida' : null,
+                  decoration: const InputDecoration(
+                      labelText: 'Descripción del empleo'),
+                  validator: (input) => input!.trim().length < 1
+                      ? 'Por favor, introduce una descripción válida'
+                      : null,
                   onSaved: (input) => _description = input!,
                 ),
                 const SizedBox(height: 15.0),
@@ -124,13 +138,16 @@ class _CreateJobPageState extends State<CreateJobPage> {
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.digitsOnly
                   ], // Solo números enteros positivos
-                  validator: (input) => input != null && int.tryParse(input) == null ? 'Por favor, introduce un salario válido' : null,
+                  validator: (input) =>
+                      input != null && int.tryParse(input) == null
+                          ? 'Por favor, introduce un salario válido'
+                          : null,
                   onSaved: (input) => _salary = int.tryParse(input!),
                 ),
                 const SizedBox(height: 15.0),
                 ElevatedButton(
-                    onPressed: _submitForm,
-                    child: const Text('Crear empleo'),
+                  onPressed: _submitForm,
+                  child: const Text('Crear empleo'),
                 ),
               ],
             ),
