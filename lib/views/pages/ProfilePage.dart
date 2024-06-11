@@ -245,7 +245,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           await downloadAndOpenPdf(userPdf!);
                         }
                       },
-                      child: Text('Ver PDF'),
+                      child: Text('Ver CV'),
                     ),
                   SizedBox(height: 20),
                   ElevatedButton(
