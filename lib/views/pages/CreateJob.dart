@@ -22,7 +22,7 @@ class _CreateJobPageState extends State<CreateJobPage> {
 
   // Opciones para los campos de modalidad y ubicación
   List<String> _modalityOptions = ['Remoto', 'Presencial', 'Mixto'];
-  List<String> _locationOptions = ['Medellín', 'Bogotá', 'California', 'Otro lugar'];
+  List<String> _locationOptions = ['Medellín', 'Bogotá', 'California', 'Buenos Aires'];
 
   final UserService _userService = UserService();
 
@@ -91,18 +91,18 @@ class _CreateJobPageState extends State<CreateJobPage> {
                   },
                 ),
                 const SizedBox(height: 15.0),
-                DropdownButtonFormField(
-                  decoration: const InputDecoration(labelText: 'Ubicación'),
-                  value: _location,
-                  items: _locationOptions.map((String option) {
-                    return DropdownMenuItem(
-                      value: option,
-                      child: Text(option),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
+                Autocomplete<String>(
+                  optionsBuilder: (TextEditingValue textEditingValue) {
+                    if (textEditingValue.text == '') {
+                      return _locationOptions; // Devuelve todas las opciones si el usuario no ha escrito nada
+                    }
+                    return _locationOptions.where((String option) {
+                      return option.contains(textEditingValue.text.toLowerCase());
+                    });
+                  },
+                  onSelected: (String selection) {
                     setState(() {
-                      _location = value.toString();
+                      _location = selection;
                     });
                   },
                 ),
