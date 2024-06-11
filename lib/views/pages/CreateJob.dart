@@ -4,6 +4,7 @@ import 'package:cvault/services/jobs_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:cvault/services/user_service.dart';
+import 'package:cvault/widgets/Alert.dart';
 
 class CreateJobPage extends StatefulWidget {
   @override
@@ -51,7 +52,11 @@ class _CreateJobPageState extends State<CreateJobPage> {
 
       _jobService.createJob(job);
 
-      Navigator.pop(context);
+      showAlert(
+        context,
+        'Postulación exitosa',
+        'Has solicitado el empleo exitosamente.',
+      );
     }
   }
 
@@ -124,8 +129,8 @@ class _CreateJobPageState extends State<CreateJobPage> {
                 ),
                 const SizedBox(height: 15.0),
                 ElevatedButton(
-                    child: Text('Crear empleo'),
                     onPressed: _submitForm,
+                    child: const Text('Crear empleo'),
                 ),
               ],
             ),

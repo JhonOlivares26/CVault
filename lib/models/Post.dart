@@ -8,10 +8,11 @@ class Post with ChangeNotifier {
   String description;
   String? imageUrl; // nuevo campo para la imagen
   int likes; // nuevo campo para los "me gustas"
+  List<String> userLikes = []; // nuevo campo para los "me gustas"
   
   DateTime timestamp;
 
-  Post({required this.id, required this.title, required this.userId, required this.description, this.imageUrl, required this.likes, required this.timestamp});
+  Post({required this.id, required this.title, required this.userId, required this.description, this.imageUrl, required this.likes, required this.timestamp, this.userLikes = const []});
 
   factory Post.fromFirestore(DocumentSnapshot postDoc) {
     Map<String, dynamic> postData = postDoc.data() as Map<String, dynamic>;
@@ -23,6 +24,7 @@ class Post with ChangeNotifier {
       imageUrl: postData['imageUrl'], // nuevo campo para la imagen
       likes: postData['likes'], // nuevo campo para los "me gustas"
       timestamp: (postData['timestamp'] as Timestamp).toDate(),
+      userLikes: List<String>.from(postData['userLikes'] ?? []), // nuevo campo para los "me gustas"
     );
   }
 
@@ -35,6 +37,7 @@ class Post with ChangeNotifier {
       'imageUrl': imageUrl, // nuevo campo para la imagen
       'likes': likes, // nuevo campo para los "me gustas"
       'timestamp': timestamp,
+      'userLikes': userLikes,
     };
   }
 
