@@ -1,5 +1,6 @@
 import 'package:cvault/views/pages/ApplicationsPage.dart';
 import 'package:cvault/views/pages/CompanyJobs.dart';
+import 'package:cvault/views/pages/Favorites.dart';
 import 'package:cvault/views/pages/LoginPage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -76,6 +77,16 @@ class NavBar extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) => UserPostPage()));
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.favorite),
+                    title: const Text("Favoritos"),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => FavoritesPage()));
                     },
                   ),
                   if (user.userType == 'Persona')
