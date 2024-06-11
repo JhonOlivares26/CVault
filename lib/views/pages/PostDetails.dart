@@ -7,7 +7,7 @@ class PostDetails extends StatelessWidget {
   final String imageUrl;
   final String description;
   final int likes;
-  
+
   PostDetails({
     required this.userId,
     required this.title,
@@ -16,7 +16,8 @@ class PostDetails extends StatelessWidget {
     required this.likes,
   });
 
-  final PostService _postService = PostService(); // Instancia del servicio PostService
+  final PostService _postService =
+      PostService(); // Instancia del servicio PostService
 
   @override
   Widget build(BuildContext context) {
@@ -34,12 +35,52 @@ class PostDetails extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             FutureBuilder<String>(
-              future: _postService.getUserPhoto(userId), // Obtén la URL de la foto de perfil mediante el servicio PostService
+              future: _postService.getUserPhoto(
+                  userId), // Obtén la URL de la foto de perfil mediante el servicio PostService
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return CircularProgressIndicator(); // Muestra un indicador de carga mientras se obtiene la URL de la foto de perfil
-                } else if (snapshot.hasError) {
-                  return Text('Error al obtener la foto de perfil del usuario'); // Muestra un mensaje de error si hay algún problema al obtener la URL de la foto de perfil
+                } else if (snapshot.hasError ||
+                    !snapshot.hasData ||
+                    snapshot.data!.isEmpty) {
+                  return Container(
+                    color: const Color.fromARGB(255, 255, 255, 255),
+                    padding: EdgeInsets.all(16.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        CircleAvatar(
+                          backgroundColor: Colors
+                              .grey, // Color de fondo en caso de no tener foto
+                          radius: 24.0,
+                          child: Icon(Icons.person,
+                              color: Colors.white), // Icono predeterminado
+                        ),
+                        SizedBox(width: 12.0),
+                        FutureBuilder<String>(
+                          future: _postService.getUserName(
+                              userId), // Obtén el nombre de usuario mediante el servicio PostService
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator(); // Muestra un indicador de carga mientras se obtiene el nombre del usuario
+                            } else if (snapshot.hasError) {
+                              return Text(
+                                  'Error al obtener el nombre del usuario'); // Muestra un mensaje de error si hay algún problema al obtener el nombre del usuario
+                            } else {
+                              return Text(
+                                snapshot.data!,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.0,
+                                ),
+                              ); // Muestra el nombre del usuario obtenido del servicio
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  );
                 } else {
                   return Container(
                     color: const Color.fromARGB(255, 255, 255, 255),
@@ -48,17 +89,21 @@ class PostDetails extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         CircleAvatar(
-                          backgroundImage: NetworkImage(snapshot.data!), // Utiliza la URL de la foto de perfil obtenida
+                          backgroundImage: NetworkImage(snapshot
+                              .data!), // Utiliza la URL de la foto de perfil obtenida
                           radius: 24.0,
                         ),
                         SizedBox(width: 12.0),
                         FutureBuilder<String>(
-                          future: _postService.getUserName(userId), // Obtén el nombre de usuario mediante el servicio PostService
+                          future: _postService.getUserName(
+                              userId), // Obtén el nombre de usuario mediante el servicio PostService
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
                               return CircularProgressIndicator(); // Muestra un indicador de carga mientras se obtiene el nombre del usuario
                             } else if (snapshot.hasError) {
-                              return Text('Error al obtener el nombre del usuario'); // Muestra un mensaje de error si hay algún problema al obtener el nombre del usuario
+                              return Text(
+                                  'Error al obtener el nombre del usuario'); // Muestra un mensaje de error si hay algún problema al obtener el nombre del usuario
                             } else {
                               return Text(
                                 snapshot.data!,
