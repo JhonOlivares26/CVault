@@ -20,28 +20,55 @@ class _CompanyJobsPageState extends State<CompanyJobsPage> {
         title: Text('Trabajos publicados'),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('jobs').where('companyId', isEqualTo: currentUser?.uid).snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('jobs')
+            .where('companyId', isEqualTo: currentUser?.uid)
+            .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
-            return Text('Ha ocurrido un error: ${snapshot.error}');
+            return Center(
+                child: Text('Ha ocurrido un error: ${snapshot.error}'));
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Text("Cargando...");
+            return Center(child: const CircularProgressIndicator());
+          }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(child: const Text("No hay trabajos publicados"));
           }
           return ListView(
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-              return ListTile(
-                title: Text(data['title']),
-                subtitle: Text(data['description']),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => JobsCompanyDetails(jobData: data),
-                    ),
-                  );
-                },
+              Map<String, dynamic> data =
+                  document.data() as Map<String, dynamic>;
+              return Card(
+                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                child: ListTile(
+                  contentPadding: EdgeInsets.all(10),
+                  title: Text(data['title'],
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(height: 5),
+                      Text(data['description'], style: TextStyle(fontSize: 14)),
+                      SizedBox(height: 10),
+                      Text('Lugar: ${data['location']}',
+                          style: TextStyle(fontSize: 14)),
+                      Text('Salario: ${data['salary']}',
+                          style: TextStyle(fontSize: 14)),
+                      Text('Modalidad: ${data['modality']}',
+                          style: TextStyle(fontSize: 14)),
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => JobsCompanyDetails(jobData: data),
+                      ),
+                    );
+                  },
+                ),
               );
             }).toList(),
           );
