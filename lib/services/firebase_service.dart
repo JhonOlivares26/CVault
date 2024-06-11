@@ -130,8 +130,38 @@ class FirebaseService {
   }
 
   Future<void> deleteAccount(String userId) async {
-    await _firestore.collection('users').doc(userId).delete();
-    auth.User? user = _auth.currentUser;
-    await user?.delete();
+    try {
+      // Verificar si el usuario tiene trabajos y publicaciones
+      QuerySnapshot jobsSnapshot = await _firestore
+          .collection('jobs')
+          .where('companyId', isEqualTo: userId)
+          .get();
+      QuerySnapshot postsSnapshot = await _firestore
+          .collection('posts')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      // Eliminar trabajos del usuario, si existen
+      if (jobsSnapshot.docs.isNotEmpty) {
+        for (DocumentSnapshot jobSnapshot in jobsSnapshot.docs) {
+          await jobSnapshot.reference.delete();
+        }
+      }
+
+      // Eliminar publicaciones del usuario, si existen
+      if (postsSnapshot.docs.isNotEmpty) {
+        for (DocumentSnapshot postSnapshot in postsSnapshot.docs) {
+          await postSnapshot.reference.delete();
+        }
+      }
+
+      // Eliminar la cuenta de usuario
+      await _firestore.collection('users').doc(userId).delete();
+      auth.User? user = _auth.currentUser;
+      await user?.delete();
+    } catch (e) {
+      print('Error al eliminar la cuenta: $e');
+      throw e;
+    }
   }
 }

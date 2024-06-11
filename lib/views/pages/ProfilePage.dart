@@ -276,9 +276,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         await showAlert(context, 'Cuenta eliminada con éxito',
                             'No te extrañaremos');
                         Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()),
-                            (Route<dynamic> route) => false);
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                          (Route<dynamic> route) => false,
+                        );
                       },
                     ),
                   ),
