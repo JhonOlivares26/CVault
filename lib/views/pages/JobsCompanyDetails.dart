@@ -72,10 +72,50 @@ Widget build(BuildContext context) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text('Descripción del trabajo: ${widget.jobData['description']}'),
-                  Text('Salario: ${widget.jobData['salary']}'),
-                  Text('Modalidad: ${widget.jobData['modality']}'),
-                  Text('Ubicación: ${widget.jobData['location']}'),
+                  Center(
+                    child: Text(
+                      widget.jobData['title'], // Usa widget.jobData en lugar de widget.job
+                      style: const TextStyle(
+                        fontSize: 22, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  Card(
+                    child: ListTile(
+                      leading: Icon(Icons.business),
+                      title: Text('Compañia'),
+                      subtitle: Text('${widget.jobData['companyName']}'),
+                    ),
+                  ),
+                  Card(
+                    child: ListTile(
+                      leading: Icon(Icons.location_on),
+                      title: Text('Lugar'),
+                      subtitle: Text('${widget.jobData['location']}'),
+                    ),
+                  ),
+                  Card(
+                    child: ListTile(
+                      leading: Icon(Icons.monetization_on),
+                      title: Text('Salario'),
+                      subtitle: Text('${widget.jobData['salary']}'),
+                    ),
+                  ),
+                  Card(
+                    child: ListTile(
+                      leading: Icon(Icons.work),
+                      title: Text('Modalidad'),
+                      subtitle: Text('${widget.jobData['modality']}'),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Divider(),
+                  const Center(
+                    child: Text(
+                      'Solicitantes', // Usa widget.jobData en lugar de widget.job
+                      style: TextStyle(
+                        fontSize: 17, fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   if (userType == 'Empresa')
                     Expanded(
                       child: ListView.builder(
@@ -84,33 +124,37 @@ Widget build(BuildContext context) {
                           return ListTile(
                             title: Text(applicants[index].name),
                             subtitle: Text(applicants[index].skills),
-                            onTap: () async {
-                              String url = applicants[index].userPdf!;
-                              final response = await http.get(Uri.parse(url));
+                            trailing: ElevatedButton.icon(
+                              icon: Icon(Icons.remove_red_eye),
+                              label: Text('Ver CV'),
+                              onPressed: () async {
+                                String url = applicants[index].userPdf!;
+                                final response = await http.get(Uri.parse(url));
 
-                              if (response.statusCode == 200) {
-                                final Uint8List bytes = response.bodyBytes;
+                                if (response.statusCode == 200) {
+                                  final Uint8List bytes = response.bodyBytes;
 
-                                final tempDir = await getTemporaryDirectory();
-                                final tempPath = tempDir.path;
+                                  final tempDir = await getTemporaryDirectory();
+                                  final tempPath = tempDir.path;
 
-                                final File file = File('$tempPath/profile.pdf');
+                                  final File file = File('$tempPath/profile.pdf');
 
-                                await file.writeAsBytes(bytes);
+                                  await file.writeAsBytes(bytes);
 
-                                OpenFile.open(file.path);
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Error al descargar el PDF'),
-                                  ),
-                                );
-                              }
-                            },
+                                  OpenFile.open(file.path);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Error al descargar el PDF'),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
                           );
                         },
                       ),
-                    ),
+                    )
                 ],
               );
             } else {
