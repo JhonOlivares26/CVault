@@ -51,7 +51,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
             (Route<dynamic> route) => false,
           );
         } else {
-          // Maneja el caso en que no se seleccionó una imagen
+          await showAlert(context, 'Error', 'Selecciona una imagen');
           print('No se seleccionó una imagen');
         }
       }
