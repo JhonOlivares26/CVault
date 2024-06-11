@@ -60,7 +60,7 @@ class NavBar extends StatelessWidget {
                   ),
                   ListTile(
                     leading: Icon(Icons.search),
-                    title: Text('Buscar Skills'),
+                    title: Text('Buscar habilidades'),
                     onTap: () {
                       Navigator.push(
                         context,
