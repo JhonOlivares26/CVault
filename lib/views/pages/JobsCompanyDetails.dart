@@ -22,11 +22,25 @@ class _JobsCompanyDetailsState extends State<JobsCompanyDetails> {
   bool hasApplied = false;
   String userType = '';
   List<User> applicants = [];
+  final _formKey = GlobalKey<FormState>();
+
+  TextEditingController _descriptionController = TextEditingController();
+  TextEditingController _salaryController = TextEditingController();
+  TextEditingController _modalityController = TextEditingController();
+  TextEditingController _locationController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     userTypeAndApplicantsFuture = _getUserTypeAndApplicants();
+    _initializeControllers();
+  }
+
+  void _initializeControllers() {
+    _descriptionController.text = widget.jobData['description'] ?? '';
+    _salaryController.text = widget.jobData['salary'] ?? '';
+    _modalityController.text = widget.jobData['modality'] ?? '';
+    _locationController.text = widget.jobData['location'] ?? '';
   }
 
   Future<List<User>> _getUserTypeAndApplicants() async {
@@ -35,16 +49,22 @@ class _JobsCompanyDetailsState extends State<JobsCompanyDetails> {
     final currentUser = auth.FirebaseAuth.instance.currentUser;
 
     if (currentUser != null) {
-      final userDoc = await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).get();
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .get();
       setState(() {
         userType = userDoc.data()?['userType'] ?? '';
-        hasApplied = widget.jobData['applicants'].contains(currentUser.uid); // Usa widget.jobData en lugar de widget.job
+        hasApplied = widget.jobData['applicants'].contains(currentUser.uid);
       });
 
       if (userType == 'Empresa') {
-        for (String applicantId in widget.jobData['applicants']) { // Usa widget.jobData en lugar de widget.job
-          final applicantDoc = await FirebaseFirestore.instance.collection('users').doc(applicantId).get();
-          datos.add(User.fromFirestore(applicantDoc)); // Usamos fromFirestore en lugar de fromDocument
+        for (String applicantId in widget.jobData['applicants']) {
+          final applicantDoc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(applicantId)
+              .get();
+          datos.add(User.fromFirestore(applicantDoc));
         }
       }
     }
@@ -53,69 +73,91 @@ class _JobsCompanyDetailsState extends State<JobsCompanyDetails> {
     return Future.value(datos);
   }
 
+  Future<void> _saveJobDetails() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      await FirebaseFirestore.instance
+          .collection('jobs')
+          .doc(widget.jobData['id'])
+          .update({
+        'description': _descriptionController.text,
+        'salary': _salaryController.text,
+        'modality': _modalityController.text,
+        'location': _locationController.text,
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Actualizado correctamente.')),
+      );
+    }
+  }
+
+  Future<void> _deleteJob() async {
+    await FirebaseFirestore.instance
+        .collection('jobs')
+        .doc(widget.jobData['id'])
+        .delete();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Eliminado correctamente.')),
+    );
+    Navigator.of(context).pop(); // Regresa a la pantalla anterior
+  }
+
+  void _confirmDelete() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmar eliminación'),
+          content:
+              const Text('¿Estás seguro de que deseas eliminar este trabajo?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Eliminar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _deleteJob();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text('Detalles del trabajo'),
-    ),
-    body: FutureBuilder<List<User>>(
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Detalles del trabajo'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete, color: Colors.red),
+            onPressed: _confirmDelete,
+          ),
+        ],
+      ),
+      body: FutureBuilder<List<User>>(
         future: userTypeAndApplicantsFuture,
         builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
+            return Center(child: Text('Error: ${snapshot.error}'));
           } else {
             if (snapshot.hasData) {
               List<User> applicants = snapshot.data!;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Center(
-                    child: Text(
-                      widget.jobData['title'], // Usa widget.jobData en lugar de widget.job
-                      style: const TextStyle(
-                        fontSize: 22, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  Card(
-                    child: ListTile(
-                      leading: Icon(Icons.business),
-                      title: Text('Compañia'),
-                      subtitle: Text('${widget.jobData['companyName']}'),
-                    ),
-                  ),
-                  Card(
-                    child: ListTile(
-                      leading: Icon(Icons.location_on),
-                      title: Text('Lugar'),
-                      subtitle: Text('${widget.jobData['location']}'),
-                    ),
-                  ),
-                  Card(
-                    child: ListTile(
-                      leading: Icon(Icons.monetization_on),
-                      title: Text('Salario'),
-                      subtitle: Text('${widget.jobData['salary']}'),
-                    ),
-                  ),
-                  Card(
-                    child: ListTile(
-                      leading: Icon(Icons.work),
-                      title: Text('Modalidad'),
-                      subtitle: Text('${widget.jobData['modality']}'),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  const Divider(),
-                  const Center(
-                    child: Text(
-                      'Solicitantes', // Usa widget.jobData en lugar de widget.job
-                      style: TextStyle(
-                        fontSize: 17, fontWeight: FontWeight.bold),
-                      ),
-                    ),
+                  Text('Descripción del trabajo: ${widget.jobData['description']}'),
+                  Text('Salario: ${widget.jobData['salary']}'),
+                  Text('Modalidad: ${widget.jobData['modality']}'),
+                  Text('Ubicación: ${widget.jobData['location']}'),
                   if (userType == 'Empresa')
                     Expanded(
                       child: ListView.builder(
@@ -124,41 +166,37 @@ Widget build(BuildContext context) {
                           return ListTile(
                             title: Text(applicants[index].name),
                             subtitle: Text(applicants[index].skills),
-                            trailing: ElevatedButton.icon(
-                              icon: Icon(Icons.remove_red_eye),
-                              label: Text('Ver CV'),
-                              onPressed: () async {
-                                String url = applicants[index].userPdf!;
-                                final response = await http.get(Uri.parse(url));
+                            onTap: () async {
+                              String url = applicants[index].userPdf!;
+                              final response = await http.get(Uri.parse(url));
 
-                                if (response.statusCode == 200) {
-                                  final Uint8List bytes = response.bodyBytes;
+                              if (response.statusCode == 200) {
+                                final Uint8List bytes = response.bodyBytes;
 
-                                  final tempDir = await getTemporaryDirectory();
-                                  final tempPath = tempDir.path;
+                                final tempDir = await getTemporaryDirectory();
+                                final tempPath = tempDir.path;
 
-                                  final File file = File('$tempPath/profile.pdf');
+                                final File file = File('$tempPath/profile.pdf');
 
-                                  await file.writeAsBytes(bytes);
+                                await file.writeAsBytes(bytes);
 
-                                  OpenFile.open(file.path);
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Error al descargar el PDF'),
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
+                                OpenFile.open(file.path);
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Error al descargar el PDF'),
+                                  ),
+                                );
+                              }
+                            },
                           );
                         },
                       ),
-                    )
+                    ),
                 ],
               );
             } else {
-              return Text('No hay datos disponibles');
+              return const Center(child: Text('No hay datos disponibles'));
             }
           }
         },
