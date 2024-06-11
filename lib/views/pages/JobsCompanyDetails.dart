@@ -151,49 +151,114 @@ class _JobsCompanyDetailsState extends State<JobsCompanyDetails> {
           } else {
             if (snapshot.hasData) {
               List<User> applicants = snapshot.data!;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text('Descripción del trabajo: ${widget.jobData['description']}'),
-                  Text('Salario: ${widget.jobData['salary']}'),
-                  Text('Modalidad: ${widget.jobData['modality']}'),
-                  Text('Ubicación: ${widget.jobData['location']}'),
-                  if (userType == 'Empresa')
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: applicants.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(applicants[index].name),
-                            subtitle: Text(applicants[index].skills),
-                            onTap: () async {
-                              String url = applicants[index].userPdf!;
-                              final response = await http.get(Uri.parse(url));
-
-                              if (response.statusCode == 200) {
-                                final Uint8List bytes = response.bodyBytes;
-
-                                final tempDir = await getTemporaryDirectory();
-                                final tempPath = tempDir.path;
-
-                                final File file = File('$tempPath/profile.pdf');
-
-                                await file.writeAsBytes(bytes);
-
-                                OpenFile.open(file.path);
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Error al descargar el PDF'),
-                                  ),
-                                );
-                              }
-                            },
-                          );
+              return Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      TextFormField(
+                        controller: _descriptionController,
+                        decoration: const InputDecoration(
+                            labelText: 'Descripción del trabajo'),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a description';
+                          }
+                          return null;
                         },
                       ),
-                    ),
-                ],
+                      TextFormField(
+                        controller: _salaryController,
+                        decoration: const InputDecoration(labelText: 'Salario'),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a salary';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _modalityController,
+                        decoration:
+                            const InputDecoration(labelText: 'Modalidad'),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a modality';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _locationController,
+                        decoration:
+                            const InputDecoration(labelText: 'Ubicación'),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a location';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      if (userType == 'Empresa') ...[
+                        Text(
+                          'Aplicantes',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: applicants.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: Text(applicants[index].name),
+                                subtitle: Text(applicants[index].skills),
+                                onTap: () async {
+                                  String url = applicants[index].userPdf!;
+                                  final response =
+                                      await http.get(Uri.parse(url));
+
+                                  if (response.statusCode == 200) {
+                                    final Uint8List bytes = response.bodyBytes;
+
+                                    final tempDir =
+                                        await getTemporaryDirectory();
+                                    final tempPath = tempDir.path;
+
+                                    final File file =
+                                        File('$tempPath/profile.pdf');
+
+                                    await file.writeAsBytes(bytes);
+
+                                    OpenFile.open(file.path);
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content:
+                                            Text('Error al descargar el PDF'),
+                                      ),
+                                    );
+                                  }
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 20),
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: _saveJobDetails,
+                          child: const Text('Guardar'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               );
             } else {
               return const Center(child: Text('No hay datos disponibles'));
